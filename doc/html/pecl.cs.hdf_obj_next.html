@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>hdf_obj_next</title><link rel="stylesheet" href="docbook.css" type="text/css"/><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"/><link rel="home" href="index.html" title="ClearSilver PHP Extension"/><link rel="up" href="index.html" title="ClearSilver PHP Extension"/><link rel="prev" href="pecl.cs.hdf_obj_child.html" title="hdf_obj_child"/><link rel="next" href="pecl.cs.hdf_get_child.html" title="hdf_get_child"/></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">hdf_obj_next</th></tr><tr><td align="left"><a accesskey="p" href="pecl.cs.hdf_obj_child.html">Prev</a> </td><th width="60%" align="center"> </th><td align="right"> <a accesskey="n" href="pecl.cs.hdf_get_child.html">Next</a></td></tr></table><hr/></div><div class="refentry" title="hdf_obj_next"><a id="pecl.cs.hdf_obj_next"/><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>hdf_obj_next — Return the next node of a dataset level.</p></div><div class="refsect1" title="Description"><a id="id2541083"/><h2>Description</h2><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">resource <b class="fsfunc">hdf_obj_next</b>(</code></td><td><var class="pdparam">hdf</var><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>resource <var class="pdparam">hdf</var></code>;</div><div class="funcprototype-spacer"> </div></div><p>
+		Returns the next node of an <acronym class="acronym">HDF</acronym> resource <em class="parameter"><code>hdf</code></em>, or <span class="returnvalue">null</span> if no more children exist.
+	  </p><p>
+		</p><div class="example"><a id="id2541122"/><p class="title"><b>Example 17. <code class="function">hdf_obj_next</code> example</b></p><div class="example-contents"><pre class="programlisting">
+			
+&lt;?php
+// recursively walk an HDF node, printing the contents
+function tree_walk($node) 
+{
+  while ($node) {
+    printf("%s =&gt; %s&lt;br/&gt;\n", hdf_obj_name($node), hdf_obj_value($node));
+    tree_walk(hdf_obj_child($node));
+
+    // get the next child node
+    $node = hdf_obj_next($node);
+  }
+}
+
+$hdf = hdf_init();
+
+$arr = array('foo' =&gt; 'bar',
+             1 =&gt; array('key' =&gt; 'value'));
+
+// map the array to the HDF
+hdf_set_value($hdf, '', $arr);
+
+// iterate over the HDF
+tree_walk($hdf);
+?&gt;
+			
+		  </pre><p>
+			The above example will output:
+		  </p><pre class="screen">
+			
+ =&gt; &lt;br/&gt;
+foo =&gt; bar&lt;br/&gt;
+1 =&gt; &lt;br/&gt;
+key =&gt; value&lt;br/&gt;
+			
+		  </pre></div></div><p><br class="example-break"/>
+	  </p></div></div><div class="navfooter"><hr/><table width="100%" summary="Navigation footer"><tr><td align="left"><a accesskey="p" href="pecl.cs.hdf_obj_child.html">Prev</a> </td><td align="center"> </td><td align="right"> <a accesskey="n" href="pecl.cs.hdf_get_child.html">Next</a></td></tr><tr><td align="left" valign="top">hdf_obj_child </td><td align="center"><a accesskey="h" href="index.html">Home</a></td><td align="right" valign="top"> hdf_get_child</td></tr></table></div></body></html>

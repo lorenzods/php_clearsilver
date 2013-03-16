@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>cs_init</title><link rel="stylesheet" href="docbook.css" type="text/css"/><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"/><link rel="home" href="index.html" title="ClearSilver PHP Extension"/><link rel="up" href="index.html" title="ClearSilver PHP Extension"/><link rel="prev" href="pecl.cs.hdf_destroy.html" title="hdf_destroy"/><link rel="next" href="pecl.cs.cs_parse_string.html" title="cs_parse_string"/></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">cs_init</th></tr><tr><td align="left"><a accesskey="p" href="pecl.cs.hdf_destroy.html">Prev</a> </td><th width="60%" align="center"> </th><td align="right"> <a accesskey="n" href="pecl.cs.cs_parse_string.html">Next</a></td></tr></table><hr/></div><div class="refentry" title="cs_init"><a id="pecl.cs.cs_init"/><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>cs_init — Create and initialise a <acronym class="acronym">CS</acronym> context.</p></div><div class="refsect1" title="Description"><a id="id2541497"/><h2>Description</h2><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">resource <b class="fsfunc">cs_init</b>(</code></td><td><var class="pdparam">hdf</var><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>resource <var class="pdparam">hdf</var></code>;</div><div class="funcprototype-spacer"> </div></div><p>
+		Returns a <acronym class="acronym">CS</acronym> resource, or
+		<span class="returnvalue">null</span> if the resource could not be
+		created. The <acronym class="acronym">CS</acronym> context must be initialised
+		with an <acronym class="acronym">HDF</acronym> containing the data to be
+		rendered in the template.
+	  </p><p>
+		</p><div class="example"><a id="id2541542"/><p class="title"><b>Example 22. <code class="function">cs_init</code> example</b></p><div class="example-contents"><pre class="programlisting">
+			
+&lt;?php
+$hdf = hdf_init();
+hdf_set_value($hdf, 'foo', 'bar');
+print_r(cs_init($hdf));
+?&gt;
+			
+		  </pre></div></div><p><br class="example-break"/>
+	  </p></div></div><div class="navfooter"><hr/><table width="100%" summary="Navigation footer"><tr><td align="left"><a accesskey="p" href="pecl.cs.hdf_destroy.html">Prev</a> </td><td align="center"> </td><td align="right"> <a accesskey="n" href="pecl.cs.cs_parse_string.html">Next</a></td></tr><tr><td align="left" valign="top">hdf_destroy </td><td align="center"><a accesskey="h" href="index.html">Home</a></td><td align="right" valign="top"> cs_parse_string</td></tr></table></div></body></html>

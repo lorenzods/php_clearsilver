@@ -1,0 +1,35 @@
+BUGS TO SQUASH AND ENHANCEMENTS TO BE MADE
+
+- Expose hdf_obj_top
+
+- Expose hdf_get_attr, hdf_set_attr (See python for implementation
+  example)
+
+- Create OO interface (See
+  http://cvs.sourceforge.net/viewcvs.py/swishe/swish_php/swishe.c?rev=1.4
+  for example). The intention here would be ease of use, whereas the
+  current functional API mirrors the ClearSilver C API fairly closely;
+  there are a number of opportunities for simplifying the API using OO
+  principles.
+
+- document compact option to hdf_write_string
+  
+- Check possibility of enhancing ClearSilver C API to provide stream
+  (FILE*) equivalents to its functions that use file paths so that PHP
+  Streams API can be used in:
+  hdf_read_file()
+  NEOERR* hdf_read_stream (HDF *hdf, FILE *stream, char *path);
+  
+  hdf_write_file()
+  NEOERR *hdf_write_stream (HDF *hdf, FILE *stream, char *path);
+
+  cs_parse_file()
+  NEOERR *cs_parse_stream (CSPARSE *parse, FILE *stream, char *path);
+
+- Check possibility of enhancing ClearSilver C API to provide option
+  for creating HDFs in different formats (Pretty, Compact, Dotted) in:
+  hdf_write_file()
+  NEOERR* hdf_write_file (HDF *hdf, char *path, int format);
+
+  hdf_write_string()
+  NEOERR* hdf_write_string (HDF *hdf, char **s, int format);

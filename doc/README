@@ -1,0 +1,16 @@
+PHP CLEARSILVER DOCUMENTATION
+=============================
+
+The documentation is written in docbook format and stored in the file
+docbook.xml. It can be converted to other formats using appropriate
+stylesheets and external programs. The following command line, for
+instance, is used to create the documentation on the website.
+
+xsltproc --stringparam use.id.as.filename 1 \
+         --stringparam html.stylesheet "docbook.css" \
+         --stringparam  admon.graphics 1 \
+         --stringparam node 1 \
+         /usr/share/sgml/docbook/xsl-stylesheets/xhtml-1_1/chunk.xsl docbook.xml
+
+Further information on outputting docbook can be found at
+<http://www.sagehill.net/docbookxsl/>.

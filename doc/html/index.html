@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>ClearSilver PHP Extension</title><link rel="stylesheet" href="docbook.css" type="text/css"/><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"/><link rel="home" href="index.html" title="ClearSilver PHP Extension"/><link rel="next" href="pecl.cs.hdf_init.html" title="hdf_init"/></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">ClearSilver PHP Extension</th></tr><tr><td align="left"> </td><th width="60%" align="center"> </th><td align="right"> <a accesskey="n" href="pecl.cs.hdf_init.html">Next</a></td></tr></table><hr/></div><div class="reference" title="ClearSilver PHP Extension"><div class="titlepage"><div><div><h1 class="title"><a id="pecl.cs"/>ClearSilver PHP Extension</h1></div><div><div class="author"><h3 class="author"><span class="honorific">Mr</span>. <span class="firstname">Homme</span> <span class="surname">Zwaagstra</span></h3><div class="affiliation"><span class="orgname">GeoData Institute<br/></span><div class="address"><p><br/>
+		  University of Southampton<br/>
+		  <span class="city">Southampton</span><br/>
+		  <span class="state">Hampshire</span><br/>
+		  <span class="postcode">SO17 1BJ</span><br/>
+		  <span class="country">UK</span><br/>
+		  <span class="phone">tel: +44 (0)23 8059 2719</span><br/>
+		  <span class="fax">fax: +44 (0)23 8059 2849</span><br/>
+		  <code class="email">&lt;<a class="email" href="mailto:geodata@soton.ac.uk">geodata@soton.ac.uk</a>&gt;</code><br/>
+		</p></div></div></div></div><div><p class="copyright">Copyright © 2009 <a class="ulink" href="http://www.geodata.soton.ac.uk">GeoData Institute</a><img src="images/geodata_icon.png"/></p></div></div><hr/></div><div class="partintro" title="ClearSilver PHP Extension"><div/><div class="sect1" title="Introduction"><div class="titlepage"><div><div><h2 class="title"><a id="pecl.cs.partintro"/>Introduction</h2></div></div></div><div class="sect2" title="About PHP Clearsilver"><div class="titlepage"><div><div><h3 class="title"><a id="pecl.cs.intro"/>About PHP Clearsilver</h3></div></div></div><div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning"><tr><td rowspan="2" align="center" valign="top"><img alt="[Warning]" src="images/warning.png"/></td><th align="left">Warning</th></tr><tr><td align="left" valign="top"><p>
+			This  software is provided  as-is; use  at your  own risk!
+			Neither  the   author  nor  his  employers   can  be  held
+			responsible for any damages resulting from its use. Having
+			said that, patches are welcome!
+		  </p></td></tr></table></div><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top"><img alt="[Note]" src="images/note.png"/></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+			The latest version of this document can be found at <a class="ulink" href="http://www.geodata.soton.ac.uk/software/php_clearsilver/">http://www.geodata.soton.ac.uk/software/php_clearsilver/</a>.
+		  </p></td></tr></table></div><p>
+		  <a class="ulink" href="http://www.clearsilver.net">Clearsilver</a>
+		  is a fast, powerful, and language-neutral template
+		  system. It is designed to make it easy to create template
+		  driven websites. This extension provides a procedural <a class="ulink" href="http://www.php.net">PHP</a> interface to
+		  Clearsilver.
+		</p><p>
+		  The general idea is that PHP is used to create a
+		  Hierarchical Data Format (<acronym class="acronym">HDF</acronym>). The
+		  <acronym class="acronym">HDF</acronym> represents the dynamic output of a
+		  PHP script. The <acronym class="acronym">HDF</acronym> is then combined with
+		  static output in the form of a Clearsilver template to
+		  produce the final output. The template is composed of text
+		  (usually, but not limited to, <acronym class="acronym">HTML</acronym>)
+		  interspersed with Clearsilver tags.
+		</p><p>
+		  A useful page providing an overview of the Clearsilver
+		  software architecture can be found at <a class="ulink" href="http://www.clearsilver.net/docs/template_basics.hdf">http://www.clearsilver.net/docs/template_basics.hdf</a>.
+		</p><p>
+		  Most PHP interaction with Clearsilver involves the creation
+		  of the <acronym class="acronym">HDF</acronym>.  This can be populated
+		  dynamically, read from disk, <abbr class="abbrev">etc.</abbr> Many
+		  scripts do not output
+		  <span class="emphasis"><em>anything</em></span><sup>[<a id="id2539196" href="#ftn.id2539196" class="footnote">1</a>]</sup> to
+		  the browser directly, save the output produced through
+		  feeding the resulting <acronym class="acronym">HDF</acronym> to the
+		  template. However, the flexible design of Clearsilver,
+		  specifically its ability to easily work with templates
+		  stored as strings, means that this purist approach is not
+		  the only use for the technology. For instance, PHP objects
+		  which render to strings (<abbr class="abbrev">e.g.</abbr> implementing
+		  PHP5's <code class="function">__toString</code> method) can
+		  internally create an <acronym class="acronym">HDF</acronym> representing
+		  their current state. Their output can then be tailored by
+		  rendering this data with alternative templates. This
+		  provides an elegant solution to those seeking to create
+		  applications based on the Model View Controller
+		  (<acronym class="acronym">MVC</acronym>) paradigm.
+		</p></div><div class="sect2" title="Contact"><div class="titlepage"><div><div><h3 class="title"><a id="pecl.cs.contact"/>Contact</h3></div></div></div><p>
+		  If you have comments, enhancements, bugs or you would like
+		  to help develop the extension please email <a class="ulink" href="mailto:geodata@soton.ac.uk">geodata@soton.ac.uk</a>.
+		</p></div><div class="sect2" title="Acknowledgements"><div class="titlepage"><div><div><h3 class="title"><a id="pecl.cs.acknowledgements"/>Acknowledgements</h3></div></div></div><p>
+		  Thanks go to the <a class="ulink" href="http://www.neotonic.com/">Neotonic Software Corporation</a> for providing ClearSilver.
+		</p></div><div class="sect2" title="Download"><div class="titlepage"><div><div><h3 class="title"><a id="pecl.cs.download"/>Download</h3></div></div></div><p>
+		  The latest version can downloaded from <a class="ulink" href="http://www.geodata.soton.ac.uk/software/php_clearsilver/downloads.php">http://www.geodata.soton.ac.uk/software/php_clearsilver/downloads.php</a>.
+		</p></div><div class="sect2" title="Install"><div class="titlepage"><div><div><h3 class="title"><a id="pecl.cs.install"/>Install</h3></div></div></div><p>
+		  The following steps will enable PHP with support for
+		  Clearsilver. Use the first procedure unless you want the
+		  extension installed as a built-in module. Both procedures
+		  require that Clearsilver is
+		  installed<sup>[<a id="id2539306" href="#ftn.id2539306" class="footnote">2</a>]</sup>
+		  and that you have downloaded the PHP Clearsilver
+		  distribution.
+		</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top"><img alt="[Note]" src="images/note.png"/></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>This extension has been developed on Linux; there is no support yet for any other system.</p></td></tr></table></div><p>
+		  In the following
+		  procedures <code class="envar">PHP_CLEARSILVER</code> refers to the
+		  version of PHP Clearsilver that you are using
+		  (<abbr class="abbrev">e.g.</abbr> <span class="command"><strong>PHP_CLEARSILVER=php-clearsilver-0.1</strong></span>).
+		</p><div class="procedure" title="Procedure 1. Installation as external (shared) module"><a id="id2539342"/><p class="title"><b>Procedure 1. Installation as external (shared) module</b></p><ol class="procedure"><li class="step" title="Step 1"><p>Ensure PHP is installed. The PHP header files must also be available<sup>[<a id="id2539354" href="#ftn.id2539354" class="footnote">3</a>]</sup>.</p></li><li class="step" title="Step 2"><p>Run <span class="command"><strong>tar -xzvf ${PHP_CLEARSILVER}.tar.gz</strong></span> to extract the downloaded archive.</p></li><li class="step" title="Step 3"><p><span class="command"><strong>cd ${PHP_CLEARSILVER}</strong></span> to enter the extracted directory.</p></li><li class="step" title="Step 4"><p>Run <span class="command"><strong>./configure --with-clearsilver</strong></span><sup>[<a id="fn.config" href="#ftn.fn.config" class="footnote">4</a>]</sup>.</p></li><li class="step" title="Step 5"><p>Run <span class="command"><strong>make</strong></span> to build the Clearsilver extension.</p></li><li class="step" title="Step 6"><p>Run <span class="command"><strong>make install</strong></span> to install the resulting <code class="filename">clearsilver.so</code> file in your PHP extensions directory.</p></li></ol></div><div class="procedure" title="Procedure 2. Installation as built-in module"><a id="id2539443"/><p class="title"><b>Procedure 2. Installation as built-in module</b></p><ol class="procedure"><li class="step" title="Step 1"><p>Ensure you have a clean PHP source (&gt;= 4.3.0) available. PHP is available at <a class="ulink" href="http://www.php.net/downloads.php">http://www.php.net/downloads.php</a>.</p></li><li class="step" title="Step 2"><p>Move the downloaded <code class="filename">${PHP_CLEARSILVER}.tar.gz</code> archive to the root directory of the PHP source tree.</p></li><li class="step" title="Step 3"><p><span class="command"><strong>cd</strong></span> to the root of the PHP source tree.</p></li><li class="step" title="Step 4"><p>Run <span class="command"><strong>tar -xzvf ${PHP_CLEARSILVER}.tar.gz</strong></span> to extract the archive.</p></li><li class="step" title="Step 5"><p><span class="command"><strong>mv ${PHP_CLEARSILVER} ext/clearsilver</strong></span></p></li><li class="step" title="Step 6"><p>Run <span class="command"><strong>./buildconf --force</strong></span> to make the PHP build system aware of the Clearsilver extension.</p></li><li class="step" title="Step 7"><p>Run <span class="command"><strong>./configure --with-clearsilver</strong></span><sup>[<a href="index.html#ftn.fn.config" class="footnoteref">4</a>]</sup>. If you use <code class="option">--with-clearsilver=shared</code> you will build the extension as a shared module.</p></li><li class="step" title="Step 8"><p>Run <span class="command"><strong>make</strong></span> to build PHP with Clearsilver support.</p></li><li class="step" title="Step 9"><p>Optionally run <span class="command"><strong>make test</strong></span> to perform tests which ensure that Clearsilver is working properly.</p></li><li class="step" title="Step 10"><p>Run <span class="command"><strong>make install</strong></span> to install PHP on the system.</p></li></ol></div><p>
+		  Once installed you can view the output of the <code class="function">phpinfo</code> function to check that PHP Clearsilver is available.
+		</p></div><div class="sect2" title="How to use PHP Clearsilver"><div class="titlepage"><div><div><h3 class="title"><a id="pecl.cs.usage"/>How to use PHP Clearsilver</h3></div></div></div><p>
+		  Ensure the extension is loaded, either by altering your PHP
+		  INI file or by calling the <code class="function">dl</code> function
+		  at the beginning of your script. Then work along the
+		  following lines:
+		  </p><div class="example"><a id="id2539586"/><p class="title"><b>Example 1. Clearsilver extension overview</b></p><div class="example-contents"><pre class="programlisting">
+&lt;?php
+
+// initialise the Hierarchical Data Format (HDF)
+$hdf = hdf_init();
+
+// populate HDF
+hdf_set_value($hdf, 'person.name.fore', 'Joseph');
+hdf_set_value($hdf, 'person.name.middle', 'Frank');
+hdf_set_value($hdf, 'person.name.nick', 'Buster');
+hdf_set_value($hdf, 'person.name.sur', 'Keaton');
+hdf_set_value($hdf, 'person.profession', 'Comedian');
+hdf_set_value($hdf, 'person.age', 71);
+hdf_set_value($hdf, 'person.alive', false);
+
+// initialise a Clearsilver parse tree (CS) with the HDF
+$cs = cs_init($hdf);
+
+// create template (from a string in this case) 
+$template = '&lt;p&gt;
+  &lt;b&gt;&lt;?cs var person.name.fore ?&gt; 
+  "&lt;i&gt;&lt;?cs var person.name.nick ?&gt;&lt;/i&gt;" 
+  &lt;?cs var person.name.sur ?&gt;&lt;/b&gt;, the greatest
+  &lt;?cs var person.profession ?&gt; of them all, 
+  &lt;?cs if:person.alive ?&gt; 
+    is &lt;?cs var person.age ?&gt; years old
+  &lt;?cs else ?&gt;
+    died at the age of &lt;?cs var person.age ?&gt;
+  &lt;?cs /if ?&gt;.
+&lt;/p&gt;';
+
+// parse the template
+cs_parse_string($cs, $template);
+
+// render the template
+print cs_render($cs);
+
+// destroy the resources
+hdf_destroy($hdf);
+cs_destroy($cs);
+
+?&gt;
+			</pre><p>
+			  The above example will output:
+			</p><pre class="screen">
+			  
+&lt;p&gt;
+  &lt;b&gt;Joseph 
+  "&lt;i&gt;Buster&lt;/i&gt;" 
+  Keaton&lt;/b&gt;, the greatest
+  Comedian of them all, 
+  
+    died at the age of 71
+  .
+&lt;/p&gt;
+
+			  
+			</pre></div></div><p><br class="example-break"/>
+		</p><div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top"><img alt="[Note]" src="images/note.png"/></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>
+			Documentation of Clearsilver template syntax can be found at
+			<a class="ulink" href="http://www.clearsilver.net/docs/man_templates.hdf">http://www.clearsilver.net/docs/man_templates.hdf</a>. Note
+			that some useful template functions are not documented but
+			can be found in the test examples in the Clearsilver
+			distribution (<abbr class="abbrev">e.g.</abbr> <code class="function">subcount</code>).
+		  </p></td></tr></table></div><p>
+		  The <acronym class="acronym">HDF</acronym> is described in detail at <a class="ulink" href="http://www.clearsilver.net/docs/man_hdf.hdf">http://www.clearsilver.net/docs/man_hdf.hdf</a>,
+		  but it is useful to note that it can be derived directly
+		  from PHP's <span class="type">array</span> type (see <a class="xref" href="pecl.cs.hdf_set_value.html" title="hdf_set_value">hdf_set_value</a> and
+		  <a class="xref" href="pecl.cs.hdf_obj_next.html" title="hdf_obj_next">hdf_obj_next</a>). Effectively an HDF's
+		  node name corresponds to an <span class="type">array</span>'s key. Unlike
+		  <span class="type">array</span>s, however, an HDF node can have child
+		  nodes <span class="emphasis"><em>as well as</em></span> a value; in a
+		  multi-dimensional <span class="type">array</span> a key's value is
+		  <span class="emphasis"><em>either</em></span> a primitive type (or object)
+		  <span class="emphasis"><em>or</em></span> an <span class="type">array</span>. A PHP
+		  implementation of this mapping follows:
+		</p><p>
+		  </p><div class="example"><a id="id2539730"/><p class="title"><b>Example 2. Mapping a PHP array to an <acronym class="acronym">HDF</acronym></b></p><div class="example-contents"><pre class="programlisting">
+			  
+&lt;?php
+// iterate over an array, mapping it to an HDF
+function array2hdf(&amp;$array, $hdf, $node_name = null) {
+  foreach ($array as $key =&gt; $value) {
+    if ($node_name !== null) {
+      $key = sprintf("%s.%s", $node_name, $key);
+    }
+
+    if (!is_array($value)) {
+      hdf_set_value($hdf, $key, $value);
+    } else {
+      array2hdf($value, $hdf, $key);
+    }
+  }
+}
+
+$arr = array('Name' =&gt; 'My Index',
+             'URL' =&gt; '/myindex.html',
+             'Menu' =&gt; array('Home',
+                             'Preferences',
+                             'Help',
+                             'Support'));
+
+$hdf = hdf_init();
+
+// copy the array to the HDF
+array2hdf($arr, $hdf, 'Page');
+
+print hdf_write_string($hdf);
+?&gt;
+			  
+			</pre><p>
+			  The HDF output by the above example is:
+			</p><pre class="screen">
+			  
+Page {
+Name = My Index
+URL = /myindex.html
+Menu {
+0 = Home
+1 = Preferences
+2 = Help
+3 = Support
+}
+}
+			  
+			</pre></div></div><p><br class="example-break"/>
+		  </p><div class="tip" title="Tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top"><img alt="[Tip]" src="images/tip.png"/></td><th align="left">Tip</th></tr><tr><td align="left" valign="top"><p>
+			  This can be accomplished more efficiently by passing an
+			  array as the value to
+			  <a class="xref" href="pecl.cs.hdf_set_value.html" title="hdf_set_value">hdf_set_value</a>.
+			</p></td></tr></table></div><p>
+		</p></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="refentrytitle"><a href="pecl.cs.hdf_init.html">hdf_init</a></span><span class="refpurpose"> — Initialise an <acronym class="acronym">HDF</acronym> data set.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_read_file.html">hdf_read_file</a></span><span class="refpurpose"> — Read an <acronym class="acronym">HDF</acronym> data file.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_write_file.html">hdf_write_file</a></span><span class="refpurpose"> — Write an <acronym class="acronym">HDF</acronym> data set to disk.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_read_string.html">hdf_read_string</a></span><span class="refpurpose"> — Read an <acronym class="acronym">HDF</acronym> string.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_write_string.html">hdf_write_string</a></span><span class="refpurpose"> — Serialise an <acronym class="acronym">HDF</acronym> dataset to a string.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_set_value.html">hdf_set_value</a></span><span class="refpurpose"> — Set the value of a named node.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_get_value.html">hdf_get_value</a></span><span class="refpurpose"> — Return the value of a node in the data set.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_get_node.html">hdf_get_node</a></span><span class="refpurpose"> — Return the <acronym class="acronym">HDF</acronym> data set node at a named location, creating it if it does not exist.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_set_node.html">hdf_set_node</a></span><span class="refpurpose"> — Set the tree structure of a node</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_get_obj.html">hdf_get_obj</a></span><span class="refpurpose"> — Return the <acronym class="acronym">HDF</acronym> data set node at a named location.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_obj_name.html">hdf_obj_name</a></span><span class="refpurpose"> — Return the name of a node.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_obj_value.html">hdf_obj_value</a></span><span class="refpurpose"> — Return the value of a node.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_obj_child.html">hdf_obj_child</a></span><span class="refpurpose"> — Return the first child of a dataset node.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_obj_next.html">hdf_obj_next</a></span><span class="refpurpose"> — Return the next node of a dataset level.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_get_child.html">hdf_get_child</a></span><span class="refpurpose"> — Return the first child of a named node.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_remove_tree.html">hdf_remove_tree</a></span><span class="refpurpose"> — Delete a subtree of an HDF dataset.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.hdf_destroy.html">hdf_destroy</a></span><span class="refpurpose"> — Deallocate an <acronym class="acronym">HDF</acronym> data set.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.cs_init.html">cs_init</a></span><span class="refpurpose"> — Create and initialise a <acronym class="acronym">CS</acronym> context.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.cs_parse_string.html">cs_parse_string</a></span><span class="refpurpose"> — Parse a <acronym class="acronym">CS</acronym> template string.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.cs_parse_file.html">cs_parse_file</a></span><span class="refpurpose"> — Parse a <acronym class="acronym">CS</acronym> template file.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.cs_render.html">cs_render</a></span><span class="refpurpose"> — Render a <acronym class="acronym">CS</acronym> parse tree to a string.</span></dt><dt><span class="refentrytitle"><a href="pecl.cs.cs_destroy.html">cs_destroy</a></span><span class="refpurpose"> — Clean up and deallocate a <acronym class="acronym">CS</acronym> parse tree.</span></dt></dl></div><div class="footnotes"><br/><hr/><div class="footnote"><p><sup>[<a id="ftn.id2539196" href="#id2539196" class="para">1</a>] </sup>Except
+		  <acronym class="acronym">HTTP</acronym> headers produced by the
+		  <code class="function">header</code> function.</p></div><div class="footnote"><p><sup>[<a id="ftn.id2539306" href="#id2539306" class="simpara">2</a>] </sup>Clearsilver is available at
+		  <a class="ulink" href="http://www.clearsilver.net/downloads/">http://www.clearsilver.net/downloads/</a>.</p></div><div class="footnote"><p><sup>[<a id="ftn.id2539354" href="#id2539354" class="simpara">3</a>] </sup>Depending on your system, header files may be distributed separately in a development package.</p></div><div class="footnote"><p><sup>[<a id="ftn.fn.config" href="#fn.config" class="simpara">4</a>] </sup>If Clearsilver is installed in a non default location (<abbr class="abbrev">e.g.</abbr> the <code class="option">--prefix</code> option was passed to the Clearsilver <span class="command"><strong>configure</strong></span>) or <span class="command"><strong>configure</strong></span> complains that Clearsilver cannot be found then pass the Clearsilver installation path as the argument to <code class="option">--with-clearsilver</code>.</p></div></div></div></div><div class="navfooter"><hr/><table width="100%" summary="Navigation footer"><tr><td align="left"> </td><td align="center"> </td><td align="right"> <a accesskey="n" href="pecl.cs.hdf_init.html">Next</a></td></tr><tr><td align="left" valign="top"> </td><td align="center"> </td><td align="right" valign="top"> hdf_init</td></tr></table></div></body></html>

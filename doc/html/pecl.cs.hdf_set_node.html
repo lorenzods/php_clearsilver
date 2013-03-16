@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>hdf_set_node</title><link rel="stylesheet" href="docbook.css" type="text/css"/><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"/><link rel="home" href="index.html" title="ClearSilver PHP Extension"/><link rel="up" href="index.html" title="ClearSilver PHP Extension"/><link rel="prev" href="pecl.cs.hdf_get_node.html" title="hdf_get_node"/><link rel="next" href="pecl.cs.hdf_get_obj.html" title="hdf_get_obj"/></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">hdf_set_node</th></tr><tr><td align="left"><a accesskey="p" href="pecl.cs.hdf_get_node.html">Prev</a> </td><th width="60%" align="center"> </th><td align="right"> <a accesskey="n" href="pecl.cs.hdf_get_obj.html">Next</a></td></tr></table><hr/></div><div class="refentry" title="hdf_set_node"><a id="pecl.cs.hdf_set_node"/><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>hdf_set_node — Set the tree structure of a node</p></div><div class="refsect1" title="Description"><a id="id2540549"/><h2>Description</h2><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">bool <b class="fsfunc">hdf_set_node</b>(</code></td><td><var class="pdparam">hdf</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">name</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">node</var><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>resource <var class="pdparam">hdf</var></code>;<br/><code>string <var class="pdparam">name</var></code>;<br/><code>mixed <var class="pdparam">node</var></code>;</div><div class="funcprototype-spacer"> </div></div><p>
+		Sets <em class="parameter"><code>node</code></em> to be a child node of <acronym class="acronym">HDF</acronym> <span class="type">resource</span> <em class="parameter"><code>hdf</code></em>. <em class="parameter"><code>name</code></em> determines where <em class="parameter"><code>node</code></em> will be added. If a node of the same top level name exists then it overwritten, otherwise the new node is appended. Returns <span class="returnvalue">true</span> on success, <span class="returnvalue">false</span> on failure. <em class="parameter"><code>node</code></em> can be one of:
+
+		</p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem">An <acronym class="acronym">HDF</acronym> <span class="type">resource</span> in which case the <em class="parameter"><code>value</code></em> is copied to the new node. In this case <em class="parameter"><code>value</code></em> need not be a node of <em class="parameter"><code>hdf</code></em> and as such is a useful way of copying <acronym class="acronym">HDF</acronym> datasets.</li><li class="listitem">An <span class="type">array</span> in which case key =&gt; value pairs are mapped to node_name =&gt; value. This also works for multi-dimensional <span class="type">array</span>s.</li></ul></div><p>
+
+		</p><div class="example"><a id="id2540665"/><p class="title"><b>Example 11. <code class="function">hdf_set_node</code> using an <acronym class="acronym">HDF</acronym> <span class="type">resource</span></b></p><div class="example-contents"><pre class="programlisting">
+			
+&lt;?php
+$hdf = hdf_init();
+$another_hdf = hdf_init();
+
+$hdf_str = 'Poem {
+  Author = Mrs Sarah Joseph Hale
+  Year = 1830
+  Origin = Boston
+  Verse &lt;&lt; EOM
+Mary had a little lamb,
+Its fleece was white as snow.
+And everywhere that Mary went,
+The lamb was sure to go.
+EOM
+}';
+
+// populate an HDF
+hdf_read_string($hdf, $hdf_str);
+
+// copy one HDF to another
+hdf_set_node($another_hdf, '', $hdf);
+
+// copy it again to another location
+hdf_set_node($another_hdf, 'Copy', $hdf);
+
+print hdf_write_string($another_hdf);
+?&gt;
+			
+		  </pre></div></div><p><br class="example-break"/>
+		
+		</p><div class="example"><a id="id2540684"/><p class="title"><b>Example 12. <code class="function">hdf_set_node</code> using an <span class="type">array</span></b></p><div class="example-contents"><pre class="programlisting">
+			
+&lt;?php
+$hdf = hdf_init();
+
+$array = array('null' =&gt; null,
+               'bool' =&gt; array('true' =&gt; true,
+                               'false'=&gt; false),
+               'integer' =&gt; array('positive' =&gt; 100,
+                                  'negative' =&gt; -72),
+               'float.positive' =&gt; 0.5321, // you can still use dotted notation 
+               'float.negative' =&gt; -79.94134,
+               'string' =&gt; 'Getting the picture?');
+
+hdf_set_node($hdf, 'my.key', $array);
+
+print hdf_write_string($hdf);
+?&gt;
+			
+		  </pre></div></div><p><br class="example-break"/>
+
+	  </p></div></div><div class="navfooter"><hr/><table width="100%" summary="Navigation footer"><tr><td align="left"><a accesskey="p" href="pecl.cs.hdf_get_node.html">Prev</a> </td><td align="center"> </td><td align="right"> <a accesskey="n" href="pecl.cs.hdf_get_obj.html">Next</a></td></tr><tr><td align="left" valign="top">hdf_get_node </td><td align="center"><a accesskey="h" href="index.html">Home</a></td><td align="right" valign="top"> hdf_get_obj</td></tr></table></div></body></html>

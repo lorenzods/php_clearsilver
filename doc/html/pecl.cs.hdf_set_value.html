@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>hdf_set_value</title><link rel="stylesheet" href="docbook.css" type="text/css"/><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"/><link rel="home" href="index.html" title="ClearSilver PHP Extension"/><link rel="up" href="index.html" title="ClearSilver PHP Extension"/><link rel="prev" href="pecl.cs.hdf_write_string.html" title="hdf_write_string"/><link rel="next" href="pecl.cs.hdf_get_value.html" title="hdf_get_value"/></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">hdf_set_value</th></tr><tr><td align="left"><a accesskey="p" href="pecl.cs.hdf_write_string.html">Prev</a> </td><th width="60%" align="center"> </th><td align="right"> <a accesskey="n" href="pecl.cs.hdf_get_value.html">Next</a></td></tr></table><hr/></div><div class="refentry" title="hdf_set_value"><a id="pecl.cs.hdf_set_value"/><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>hdf_set_value — Set the value of a named node.</p></div><div class="refsect1" title="Description"><a id="id2540238"/><h2>Description</h2><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">bool <b class="fsfunc">hdf_set_value</b>(</code></td><td><var class="pdparam">hdf</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">name</var>, </td><td> </td></tr><tr><td> </td><td><var class="pdparam">value</var><code>)</code>;</td><td> </td></tr></table><div class="paramdef-list"><code>resource <var class="pdparam">hdf</var></code>;<br/><code>string <var class="pdparam">name</var></code>;<br/><code>mixed <var class="pdparam">value</var></code>;</div><div class="funcprototype-spacer"> </div></div><p>
+		Sets the <em class="parameter"><code>value</code></em> of node <em class="parameter"><code>name</code></em> in <acronym class="acronym">HDF</acronym> resource <em class="parameter"><code>hdf</code></em>. Returns <span class="returnvalue">true</span> on success, <span class="returnvalue">false</span> on failure. <em class="parameter"><code>value</code></em> can be any PHP variable; objects are converted to their string representation.
+		</p><div class="example"><a id="id2540299"/><p class="title"><b>Example 8. <code class="function">hdf_set_value</code> using primitive datatypes</b></p><div class="example-contents"><pre class="programlisting">
+			
+&lt;?php
+$hdf = hdf_init();
+
+hdf_set_value($hdf, 'data.null', null);
+hdf_set_value($hdf, 'data.bool.true', true);
+hdf_set_value($hdf, 'data.bool.false', false);
+hdf_set_value($hdf, 'data.integer.positive', +100);
+hdf_set_value($hdf, 'data.integer.negative', -72);
+hdf_set_value($hdf, 'data.float.positive', 0.5321);
+hdf_set_value($hdf, 'data.float.negative', -79.94134);
+hdf_set_value($hdf, 'data.array', array(1, 2, 3));  // does NOT add an array; use hdf_set_node() instead
+hdf_set_value($hdf, 'data.string', 'Getting the picture?');
+
+print hdf_write_string($hdf);
+?&gt;
+			
+		  </pre></div></div><p><br class="example-break"/>
+		
+	  </p></div></div><div class="navfooter"><hr/><table width="100%" summary="Navigation footer"><tr><td align="left"><a accesskey="p" href="pecl.cs.hdf_write_string.html">Prev</a> </td><td align="center"> </td><td align="right"> <a accesskey="n" href="pecl.cs.hdf_get_value.html">Next</a></td></tr><tr><td align="left" valign="top">hdf_write_string </td><td align="center"><a accesskey="h" href="index.html">Home</a></td><td align="right" valign="top"> hdf_get_value</td></tr></table></div></body></html>

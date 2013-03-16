@@ -1,0 +1,215 @@
+------------------------------------------------------------------------
+r57 | homme | 2009-10-27 15:05:50 +0000 (Tue, 27 Oct 2009) | 2 lines
+
+Updated filenames
+
+------------------------------------------------------------------------
+r56 | homme | 2009-10-27 13:15:14 +0000 (Tue, 27 Oct 2009) | 2 lines
+
+Updated documentation
+
+------------------------------------------------------------------------
+r55 | homme | 2009-10-26 18:16:06 +0000 (Mon, 26 Oct 2009) | 2 lines
+
+Swapped hdf_set_node() parameters to match hdf_set_value()
+
+------------------------------------------------------------------------
+r54 | homme | 2009-10-26 18:05:01 +0000 (Mon, 26 Oct 2009) | 7 lines
+
+hdf_set_value() now converts parameters to strings
+
+hdf_set_value() has been altered so that all PHP parameters passed in
+as the value argument are converted to their string
+representations. hdf_set_node() should now be used to add HDF objects
+and arrays to an HDF structure.
+
+------------------------------------------------------------------------
+r53 | homme | 2009-10-26 16:39:20 +0000 (Mon, 26 Oct 2009) | 4 lines
+
+Fixed array recursion problem
+
+Code is now based on php_array_walk() instead of php_array_merge()
+
+------------------------------------------------------------------------
+r52 | homme | 2009-10-26 16:29:14 +0000 (Mon, 26 Oct 2009) | 5 lines
+
+Added PHP hdf_set_node() function
+
+This enables other HDF nodes as well as PHP arrays to be copied into
+an existing HDF structure.
+
+------------------------------------------------------------------------
+r51 | homme | 2009-10-26 15:35:28 +0000 (Mon, 26 Oct 2009) | 2 lines
+
+Updated PHP error calls and tidied code
+
+------------------------------------------------------------------------
+r50 | homme | 2009-10-26 14:59:41 +0000 (Mon, 26 Oct 2009) | 2 lines
+
+Added PHP_CLEARSILVER_VERSION constant to PHP and C API
+
+------------------------------------------------------------------------
+r49 | homme | 2009-10-26 12:48:49 +0000 (Mon, 26 Oct 2009) | 2 lines
+
+Made M4 macro calls more conventional
+
+------------------------------------------------------------------------
+r48 | homme | 2009-10-26 10:44:41 +0000 (Mon, 26 Oct 2009) | 5 lines
+
+Use consistent conditional compilation directive for PHP version
+
+Use ZEND_MODULE_API_NO instead of PHP_API_VERSION as the former has
+already been used, and the two appear to be the same.
+
+------------------------------------------------------------------------
+r47 | homme | 2009-10-23 18:06:09 +0100 (Fri, 23 Oct 2009) | 6 lines
+
+Enabled compilation under PHP 5.3.0
+
+PHP 5.3.0 included some C API changes, specifically the addition of
+some macros affecting zval objects. These changes have been integrated
+using preprocessor conditionals.
+
+------------------------------------------------------------------------
+r46 | homme | 2009-10-23 15:50:37 +0100 (Fri, 23 Oct 2009) | 5 lines
+
+Added test to ensure non-root nodes are not destroyed.
+
+hdf_destroy() should not destroy nodes that are not root nodes,
+returning false in this eventuality.
+
+------------------------------------------------------------------------
+r45 | homme | 2009-10-23 15:41:29 +0100 (Fri, 23 Oct 2009) | 6 lines
+
+Updated return values to honour the documentation.
+
+Edge cases where functions that e.g. are supposed to return a boolean
+used to return NULL if the parameter type wasn't as expected. This is
+now fixed.
+
+------------------------------------------------------------------------
+r44 | hrz | 2004-11-10 11:19:15 +0000 (Wed, 10 Nov 2004) | 1 line
+
+removed defunct clearsilver.php
+------------------------------------------------------------------------
+r43 | hrz | 2004-11-09 12:27:19 +0000 (Tue, 09 Nov 2004) | 1 line
+
+enabled hdf_set_value to accept HDF resources as the value, in which case the resource is copied into the specified node in the destination dataset
+------------------------------------------------------------------------
+r42 | hrz | 2004-11-08 17:38:03 +0000 (Mon, 08 Nov 2004) | 1 line
+
+exposed hdf_remove_tree, added TODO and fixed hdf_destroy to only be called on root nodes
+------------------------------------------------------------------------
+r41 | hrz | 2004-11-08 12:35:10 +0000 (Mon, 08 Nov 2004) | 1 line
+
+added hdf_read_string phpt test
+------------------------------------------------------------------------
+r40 | hrz | 2004-11-08 12:34:21 +0000 (Mon, 08 Nov 2004) | 1 line
+
+exposed hdf_read_string function and renamed .phpt files to reflect the functions they are testing
+------------------------------------------------------------------------
+r39 | hrz | 2004-11-05 17:22:19 +0000 (Fri, 05 Nov 2004) | 1 line
+
+documented new return value for cs_render when called before any template has been specified
+------------------------------------------------------------------------
+r38 | hrz | 2004-11-05 17:16:39 +0000 (Fri, 05 Nov 2004) | 1 line
+
+fixed segfault caused when cs_render() called on  resource that has not had any template specified
+------------------------------------------------------------------------
+r37 | hrz | 2004-11-02 17:24:21 +0000 (Tue, 02 Nov 2004) | 1 line
+
+updated INSTALL file with new instructions
+------------------------------------------------------------------------
+r36 | hrz | 2004-11-02 17:07:02 +0000 (Tue, 02 Nov 2004) | 1 line
+
+rewrote install section
+------------------------------------------------------------------------
+r35 | hrz | 2004-11-02 15:58:00 +0000 (Tue, 02 Nov 2004) | 1 line
+
+added proper check testing whether Clearsilver links against db2 library
+------------------------------------------------------------------------
+r34 | hrz | 2004-11-01 17:44:56 +0000 (Mon, 01 Nov 2004) | 1 line
+
+conform to PECL package structure with tests etc.
+------------------------------------------------------------------------
+r33 | hrz | 2004-11-01 10:27:17 +0000 (Mon, 01 Nov 2004) | 1 line
+
+updated config.m4 to support building of shared object extension using phpize and removed redundant Makefile
+------------------------------------------------------------------------
+r32 | hrz | 2004-10-29 15:00:42 +0100 (Fri, 29 Oct 2004) | 1 line
+
+solved possible unresolved symbol errors upon linking by updating config.m4 to copy Clearsilver and link with Berkley db if found
+------------------------------------------------------------------------
+r31 | hrz | 2004-10-29 09:56:45 +0100 (Fri, 29 Oct 2004) | 1 line
+
+edited Makefile to specify Clearsilver correctly. Updated docbook and renamed Makefile to external.Makefile
+------------------------------------------------------------------------
+r30 | hrz | 2004-10-28 17:41:32 +0100 (Thu, 28 Oct 2004) | 1 line
+
+updated geodata urls and structured install section as procedure
+------------------------------------------------------------------------
+r29 | hrz | 2004-10-27 12:38:28 +0100 (Wed, 27 Oct 2004) | 1 line
+
+rewrote introduction
+------------------------------------------------------------------------
+r28 | hrz | 2004-10-27 11:05:42 +0100 (Wed, 27 Oct 2004) | 1 line
+
+altered section headings with 'Clearsilver' to 'PHP Clearsilver'
+------------------------------------------------------------------------
+r27 | hrz | 2004-10-27 10:20:23 +0100 (Wed, 27 Oct 2004) | 1 line
+
+added Acknowledgements section and show URL for important links
+------------------------------------------------------------------------
+r26 | hrz | 2004-10-15 16:45:50 +0100 (Fri, 15 Oct 2004) | 1 line
+
+made build more PHP compliant; files must now be placed in ext/clearsilver directory of PHP source tree. Added config.m4 for static build into PHP binary. Modified Makefile to include headers from parent PHP tree.
+------------------------------------------------------------------------
+r25 | hrz | 2004-10-14 20:55:45 +0100 (Thu, 14 Oct 2004) | 1 line
+
+made build more PHP compliant; files must now be placed in ext/clearsilver directory of PHP source tree. Added config.m4 for static build into PHP binary. Modified Makefile to include headers from parent PHP tree.
+------------------------------------------------------------------------
+r24 | hrz | 2004-10-13 11:13:42 +0100 (Wed, 13 Oct 2004) | 1 line
+
+tweaked Makefile to use ld and added clean and test targets
+------------------------------------------------------------------------
+r20 | hrz | 2004-10-08 09:06:56 +0100 (Fri, 08 Oct 2004) | 1 line
+
+set intra document function references to xrefs
+------------------------------------------------------------------------
+r19 | hrz | 2004-10-07 19:37:42 +0100 (Thu, 07 Oct 2004) | 1 line
+
+added copyright
+------------------------------------------------------------------------
+r18 | hrz | 2004-10-07 19:02:35 +0100 (Thu, 07 Oct 2004) | 1 line
+
+updated author info
+------------------------------------------------------------------------
+r17 | hrz | 2004-10-07 18:18:24 +0100 (Thu, 07 Oct 2004) | 1 line
+
+set Date keyword property
+------------------------------------------------------------------------
+r16 | hrz | 2004-10-07 18:12:41 +0100 (Thu, 07 Oct 2004) | 1 line
+
+added author/date info and tweaked for use with DocBook XSL
+------------------------------------------------------------------------
+r15 | hrz | 2004-10-06 17:04:44 +0100 (Wed, 06 Oct 2004) | 1 line
+
+fixed PHP syntax error in cs_destroy example
+------------------------------------------------------------------------
+r14 | hrz | 2004-10-06 16:59:15 +0100 (Wed, 06 Oct 2004) | 1 line
+
+Added DocBook documentation
+------------------------------------------------------------------------
+r13 | hrz | 2004-10-06 12:45:10 +0100 (Wed, 06 Oct 2004) | 1 line
+
+function proto comments now accurately reflect reality and are consistent with documentation. 
+------------------------------------------------------------------------
+r12 | hrz | 2004-10-05 16:48:34 +0100 (Tue, 05 Oct 2004) | 1 line
+
+makefile no longer requires separate modules directory
+------------------------------------------------------------------------
+r5 | hrz | 2004-10-04 13:59:45 +0100 (Mon, 04 Oct 2004) | 2 lines
+
+initial import
+
+------------------------------------------------------------------------

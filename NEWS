@@ -1,0 +1,30 @@
+PHP CLEARSILVER RELEASE NOTES
+=============================
+
+PHP ClearSilver has been bumped from version 0.1 to 0.4 to reflect the
+stabilisation of the distribution. It has been used and tested
+extensively in house as well as by a number of external users who have
+made useful contributions.
+
+The following notable enhancements have been made. Please refer to the
+ChangeLog for further details.
+
+- Updated the package to work with PHP 5.3.0
+
+- Exposed more of the ClearSilver API, notably the hdf_read_string(),
+  hdf_remove_tree() and hdf_set_node() functions.
+
+- hdf_set_value() has been altered so that all PHP parameters passed
+  in as the value argument are converted to their string
+  representations. hdf_set_node() should now be used to add HDF
+  objects and arrays to an HDF structure.
+
+- Fixed various bugs.
+
+- Improved configuration testing and integration of existing
+  ClearSilver installations.
+
+- Improved build system to be more compatible with the PHP PECL
+  package structure.
+
+- Updated the documentation

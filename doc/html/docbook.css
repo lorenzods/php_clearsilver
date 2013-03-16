@@ -1,0 +1,104 @@
+h1
+{
+  font-family: arial, "lucida console", sans-serif;
+  color: white;
+  background-color: #24979A;
+  padding-left: 10px;
+}
+
+h2
+{ 
+  font-family: arial, "lucida console", sans-serif;
+}
+
+h3
+{ 
+  font-family: arial, "lucida console", sans-serif;
+}
+
+hr
+{ 
+  color: #24979A;
+  background-color: #24979A;
+  height: 2px;
+  border: 0px;
+}
+
+pre
+{
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: grey;
+}
+
+.orgname
+{
+  display: block;
+  font-weight: bold;
+  margin-top: -2ex;
+  padding-left: 1ex;
+}
+
+.country
+{ 
+  text-decoration: underline;
+}
+
+.phone {
+  
+}
+
+/*.email
+{ 
+  position: relative;
+
+}*/
+
+.address
+{
+  padding-left: 1ex;
+  margin-top: -2.5ex;
+}
+
+.copyright
+{ 
+  color: DimGray;
+}
+
+.copyright img
+{ 
+  vertical-align: middle;
+  margin-left: 1ex;
+}
+
+.footnotes
+{ 
+  color: DimGray;
+}
+
+div.footnotes hr
+{
+  color: grey;
+  background-color: grey;
+}
+
+.programlisting
+{ 
+  background-color: #E0E0E0;
+}
+
+.screen
+{ 
+  background-color: #FFFFDF;
+}
+
+.warning, .note, .tip, .important
+{
+  position: relative;
+  left: -5ex;
+}
+

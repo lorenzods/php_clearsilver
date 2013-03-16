@@ -1,0 +1,29 @@
+TESTS
+=====
+
+These tests are run when 'make test' is executed after having done a
+'make' of the PHP source tree.
+
+constants.phpt - Test PHP Clearsilver constants.
+hdf_init.phpt - Initialise an HDF data set.
+hdf_read_file.phpt - Read an HDF data file.
+hdf_write_file.phpt - Write an HDF data set to disk.
+hdf_read_string.phpt - Read an HDF string.
+hdf_write_string.phpt - Serialise an HDF dataset to a string.
+hdf_set_value.phpt - Set the value of a named node.
+hdf_get_value.phpt - Return the value of a node in the data set.
+hdf_set_node.phpt - Set the structure of a named node
+hdf_get_node.phpt - Return the HDF data set node at a named location, creating it if it does not exist.
+hdf_get_obj.phpt - Return the HDF data set node at a named location.
+hdf_obj_name.phpt - Return the name of a node.
+hdf_obj_value.phpt - Return the value of a node.
+hdf_obj_child.phpt - Return the first child of a dataset node.
+hdf_obj_next.phpt - Return the next node of a dataset level.
+hdf_get_child.phpt - Return the first child of a named node.
+hdf_remove_tree.phpt - Delete a subtree of an HDF dataset.
+hdf_destroy.phpt - Deallocate an HDF data set.
+cs_init.phpt - Create and initialise a CS context.
+cs_parse_string.phpt - Parse a CS template string.
+cs_parse_file.phpt - Parse a CS template file.
+cs_render.phpt - Render a CS parse tree to a string.
+cs_destroy.phpt - Clean up and deallocate a CS parse tree.
