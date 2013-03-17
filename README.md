@@ -1,5 +1,5 @@
-PHP ClearSilver
-===============
+PHP ClearSilver (for PHP 5.4 series)
+====================================
 
 Clearsilver is a fast, powerful, and language-neutral template
 system. It is designed to make it easy to create template driven

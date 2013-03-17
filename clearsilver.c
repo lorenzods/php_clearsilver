@@ -1,6 +1,6 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP Version 4                                                        |
+  | PHP Version 5                                                       |
   +----------------------------------------------------------------------+
   | Copyright (c) 1997-2003 The PHP Group                                |
   +----------------------------------------------------------------------+
@@ -20,7 +20,14 @@
 #include "config.h"
 #endif
 
+#if (PHP_MAJOR_VERSION >= 5)
+#if (PHP_MINOR_VERSION >= 4)
+#define PHP_CS_54
+#endif
+#endif
+
 #include "php.h"
+#include "php_version.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php-clearsilver.h"
@@ -89,7 +96,11 @@ char * neo_error_to_string (NEOERR *err)
  *
  * Every user visible function must have an entry in clearsilver_functions[].
  */
+#ifdef PHP_CS_54
+zend_function_entry clearsilver_functions[] = {
+#else
 function_entry clearsilver_functions[] = {
+#endif
 	PHP_FE(hdf_init,	NULL)
 	PHP_FE(hdf_read_file,	NULL)
 	PHP_FE(hdf_write_file,	NULL)
@@ -477,14 +488,23 @@ PHP_FUNCTION(hdf_set_value)
 	}
 
 	/* start buffering */
+#ifdef PHP_CS_54
+	php_output_start_default(TSRMLS_C);
+#else
 	php_start_ob_buffer (NULL, 0, 1 TSRMLS_CC);
+#endif
 
 	/* print zval */
 	zend_print_variable(value);
 
 	/* retrieve output buffer */
+#ifdef PHP_CS_54
+	php_output_get_contents(return_value TSRMLS_CC);
+	php_output_discard(TSRMLS_C);
+#else
 	php_ob_get_buffer (return_value TSRMLS_CC);
 	php_end_ob_buffer (0, 0 TSRMLS_CC);
+#endif
 	
 	err = hdf_set_value(hdf, name, Z_STRVAL_P(return_value));
 	if (err != STATUS_OK) {

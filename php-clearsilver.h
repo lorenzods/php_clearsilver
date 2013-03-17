@@ -16,7 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-#define PHP_CLEARSILVER_VERSION "0.4"
+#define PHP_CLEARSILVER_VERSION "0.5"
 
 #ifndef PHP_CLEARSILVER_H
 #define PHP_CLEARSILVER_H
