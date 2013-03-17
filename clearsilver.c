@@ -20,12 +20,6 @@
 #include "config.h"
 #endif
 
-#if (PHP_MAJOR_VERSION >= 5)
-#if (PHP_MINOR_VERSION >= 4)
-#define PHP_CS_54
-#endif
-#endif
-
 #include "php.h"
 #include "php_version.h"
 #include "php_ini.h"
@@ -33,6 +27,12 @@
 #include "php-clearsilver.h"
 
 #include "ClearSilver.h"
+
+#if (PHP_MAJOR_VERSION >=5)
+#if (PHP_MINOR_VERSION >=4)
+#define PHP_CS_54
+#endif
+#endif
 
 /***********************************************************************
  * NOTE FOR FUTURE DEVELOPMENT: 
