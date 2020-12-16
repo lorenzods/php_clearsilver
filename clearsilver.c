@@ -46,10 +46,10 @@
 
 #ifdef PHP_CS_74
 #define PHPCS_HDF_PARAM(_hdf,_input) _hdf = (HDF*)zend_fetch_resource(Z_RES_P(_input),"ClearSilver HDF",le_clearsilver_hdf)
-#define PHPCS_CS_PARAM(_cs,_input) _cs = (CSPARSE*)zend_fetch_resource(Z_RES_P(_input),"ClearSilver CS",le_clearsilver_hdf)
+#define PHPCS_CS_PARAM(_cs,_input) _cs = (CSPARSE*)zend_fetch_resource(Z_RES_P(_input),"ClearSilver CS",le_clearsilver_cs)
 #else
 #define PHPCS_HDF_PARAM(_hdf,_input) ZEND_FETCH_RESOURCE(_hdf, HDF *, &_input, -1, "ClearSilver HDF", le_clearsilver_hdf)
-#define PHPCS_CS_PARAM(_cs,_input) ZEND_FETCH_RESOURCE(_cs, CSPARSE *, &_input, -1, "ClearSilver CS", le_clearsilver_hdf)
+#define PHPCS_CS_PARAM(_cs,_input) ZEND_FETCH_RESOURCE(_cs, CSPARSE *, &_input, -1, "ClearSilver CS", le_clearsilver_cs)
 #endif
 
 #define my_debug(str...) { FILE* tst = fopen("mytext.txt","a");if (tst) { fprintf(tst, str);fclose(tst); } }
@@ -216,6 +216,7 @@ ZEND_GET_MODULE(clearsilver)
 	*/
 
 	REGISTER_STRING_CONSTANT("PHP_CLEARSILVER_VERSION", PHP_CLEARSILVER_VERSION, CONST_CS | CONST_PERSISTENT);
+	my_debug( "init\n" );
 	le_clearsilver_hdf = zend_register_list_destructors_ex(clearsilver_hdf_dtor,
 														   NULL,
 														   "ClearSilver HDF",
@@ -234,6 +235,8 @@ ZEND_GET_MODULE(clearsilver)
  */
 PHP_MSHUTDOWN_FUNCTION(clearsilver)
 {
+	my_debug( "shutdown\n" );
+	my_debug( "-----------------------------------\n" );
 	/* uncomment this line if you have INI entries
 	   UNREGISTER_INI_ENTRIES();
 	*/
@@ -247,6 +250,7 @@ PHP_MSHUTDOWN_FUNCTION(clearsilver)
  */
 PHP_RINIT_FUNCTION(clearsilver)
 {
+	my_debug( "rinit\n" );
 	return SUCCESS;
 }
 /* }}} */
@@ -256,6 +260,7 @@ PHP_RINIT_FUNCTION(clearsilver)
  */
 PHP_RSHUTDOWN_FUNCTION(clearsilver)
 {
+	my_debug( "rshutdown\n" );
 	return SUCCESS;
 }
 /* }}} */
@@ -281,6 +286,7 @@ PHP_FUNCTION(hdf_init) {
 	HDF *hdf;
 	NEOERR *err;
 
+	my_debug( "hdf_init called\n" );
 	if (ZEND_NUM_ARGS() != 0) {
 		WRONG_PARAM_COUNT;
 	}
@@ -292,7 +298,7 @@ PHP_FUNCTION(hdf_init) {
 		RETURN_NULL();
 	}
 #ifdef PHP_CS_74
-	my_debug( "hdf_init register resource %016x\n" , hdf );
+	my_debug( "hdf_init register resource %016x with num %d\n" , hdf , le_clearsilver_hdf );
 	RETURN_RES(zend_register_resource(hdf,le_clearsilver_hdf));
 #else
 	ZEND_REGISTER_RESOURCE(return_value, hdf, le_clearsilver_hdf);	// TODO LORI
@@ -326,7 +332,6 @@ PHP_FUNCTION(hdf_read_file) {
 		RETURN_FALSE;
 	}
 	my_debug( "hdf_read_file we cool\n" );
-	RETURN_TRUE;
 
 	if (!hdf) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
@@ -400,7 +405,6 @@ PHP_FUNCTION(hdf_write_string) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 		RETURN_NULL();
 	}
-
 #ifdef PHP_CS_74
 	RETURN_STRING(str);
 #else
@@ -675,7 +679,7 @@ PHP_FUNCTION(hdf_get_node)
 	}
 
 #ifdef PHP_CS_74
-	RETURN_RES(zend_register_resource(hdf,le_clearsilver_hdf));
+	RETURN_RES(zend_register_resource(node,le_clearsilver_hdf));
 #else
 	ZEND_REGISTER_RESOURCE(return_value, node, le_clearsilver_hdf);
 #endif
@@ -1023,11 +1027,16 @@ PHP_FUNCTION(cs_init) {
 	int argc = ZEND_NUM_ARGS();
 	HDF *hdf = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE)
+	my_debug( "cs_init started\n" );
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) {
+		my_debug( "cs_init parse failed\n" );
 		return;
+	}
 
+	my_debug( "cs_init parse succeed\n" );
 	PHPCS_HDF_PARAM(hdf,zhdf);
 
+	my_debug( "cs_init hdf is %016x\n" , hdf );
 	if (!hdf) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
 		RETURN_NULL();
@@ -1041,6 +1050,7 @@ PHP_FUNCTION(cs_init) {
 	}
 
 #ifdef PHP_CS_74
+	my_debug( "cs_init register resource %016x with num %d\n" , parse , le_clearsilver_cs);
 	RETURN_RES(zend_register_resource(parse,le_clearsilver_cs));
 #else
 	ZEND_REGISTER_RESOURCE(return_value, parse, le_clearsilver_cs);
@@ -1164,14 +1174,17 @@ PHP_FUNCTION(cs_render)
 
 /* {{{ proto void cs_destroy(resource parse)
    Clean up and deallocate a CS parse tree */
-PHP_FUNCTION(cs_destroy)
-{
+PHP_FUNCTION(cs_destroy) {
 	zval *zparse = NULL;
 	CSPARSE *parse = NULL;
 	int argc = ZEND_NUM_ARGS();
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zparse) == FAILURE)
-		return;
+	my_debug( "cs_destroy started with %d parameters\n" , argc );
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zparse) == FAILURE) {
+		my_debug( "cs_destroy parse failed\n" );
+		RETURN_FALSE;
+	}
+	my_debug( "cs_destroy parse succeed\n" );
 
 	PHPCS_CS_PARAM(parse,zparse);
 #ifdef PHP_CS_74
@@ -1179,6 +1192,7 @@ PHP_FUNCTION(cs_destroy)
 #else
 	zend_list_delete(Z_LVAL_P(zparse));
 #endif
+	RETURN_TRUE;
 }
 /* }}} */
 
