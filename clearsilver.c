@@ -590,8 +590,18 @@ PHP_FUNCTION(hdf_set_value) {
 	php_start_ob_buffer (NULL, 0, 1 TSRMLS_CC);
 #endif
 
+#ifdef PHP_CS_74
 	/* print zval */
+	if (Z_TYPE_P(value)!=IS_ARRAY) {
+		zend_print_variable(value);
+	} else {
+		zval tmp;
+		ZVAL_STRING(&tmp , "Array" );
+		zend_print_variable( &tmp );
+	}
+#else
 	zend_print_variable(value);
+#endif
 
 	/* retrieve output buffer */
 #if (defined( PHP_CS_74) || defined( PHP_CS_74) )
@@ -601,7 +611,8 @@ PHP_FUNCTION(hdf_set_value) {
 	php_ob_get_buffer(return_value TSRMLS_CC);
 	php_end_ob_buffer(0, 0 TSRMLS_CC);
 #endif
-
+	my_debug( "ob_buffer was <%s>\n" , Z_STRVAL_P(return_value) );
+	my_debug( "error was %d\n" , err );
 	err = hdf_set_value(hdf, name, Z_STRVAL_P(return_value));
 	if (err != STATUS_OK) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
@@ -614,8 +625,7 @@ PHP_FUNCTION(hdf_set_value) {
 
 /* {{{ proto string hdf_get_value(resource hdf, string name, string defval)
    Return the value of a node in the data set */
-PHP_FUNCTION(hdf_get_value)
-{
+PHP_FUNCTION(hdf_get_value) {
 	zval *zhdf = NULL;
 	char *name = NULL;
 	char *defval = NULL;
@@ -636,6 +646,7 @@ PHP_FUNCTION(hdf_get_value)
 	}
 
 	value = hdf_get_value(hdf, name, defval);
+	my_debug( "hdf_get_value on name %s returned <%s>\n" , name , value );
 
 #ifdef PHP_CS_74
 	RETURN_STRING(value);
@@ -920,8 +931,7 @@ PHP_FUNCTION(hdf_get_child)
 
 /* {{{ proto resource hdf_obj_next(resource hdf)
    Return the next node of a dataset level */
-PHP_FUNCTION(hdf_obj_next)
-{
+PHP_FUNCTION(hdf_obj_next) {
 	zval *zhdf = NULL;
 	int argc = ZEND_NUM_ARGS();
 	HDF *hdf = NULL;
