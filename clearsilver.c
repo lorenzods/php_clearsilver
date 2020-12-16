@@ -52,9 +52,28 @@
 #define PHPCS_CS_PARAM(_cs,_input) ZEND_FETCH_RESOURCE(_cs, CSPARSE *, &_input, -1, "ClearSilver CS", le_clearsilver_hdf)
 #endif
 
+#define my_debug(str...) { FILE* tst = fopen("mytext.txt","a");if (tst) { fprintf(tst, str);fclose(tst); } }
+
+#ifdef PHP_CS_74
+#define PHPCS_STRLEN_VAR size_t
+#else
+#define PHPCS_STRLEN_VAR int
+#endif
+
+/*
+void my_debug( const char* str ) {
+	FILE* tst;
+	tst = fopen("mytext.txt","a");
+	if (!tst) {
+		return;
+	}
+	fprintf( tst , "%s\n" , str );
+	fclose( tst );
+}
+*/
 
 /***********************************************************************
- * NOTE FOR FUTURE DEVELOPMENT: 
+ * NOTE FOR FUTURE DEVELOPMENT:
  * Check out
  * http://cvs.sourceforge.net/viewcvs.py/swishe/swish_php/swishe.c?rev=1.4
  * for example of simple OO interface
@@ -100,7 +119,7 @@ char* neo_error_to_string (NEOERR *err) {
 	}
 
 	err_str = estrdup(str.buf);
-  
+
 	string_clear (&str);
 
 	return err_str;
@@ -191,13 +210,12 @@ ZEND_GET_MODULE(clearsilver)
 	  */
 	 PHP_MINIT_FUNCTION(clearsilver)
 {
-	/* If you have INI entries, uncomment these lines 
+	/* If you have INI entries, uncomment these lines
 	   ZEND_INIT_MODULE_GLOBALS(clearsilver, php_clearsilver_init_globals, NULL);
 	   REGISTER_INI_ENTRIES();
 	*/
 
-	REGISTER_STRING_CONSTANT("PHP_CLEARSILVER_VERSION", PHP_CLEARSILVER_VERSION, CONST_CS | CONST_PERSISTENT);	
-
+	REGISTER_STRING_CONSTANT("PHP_CLEARSILVER_VERSION", PHP_CLEARSILVER_VERSION, CONST_CS | CONST_PERSISTENT);
 	le_clearsilver_hdf = zend_register_list_destructors_ex(clearsilver_hdf_dtor,
 														   NULL,
 														   "ClearSilver HDF",
@@ -268,14 +286,14 @@ PHP_FUNCTION(hdf_init) {
 	}
 
 	err = hdf_init(&hdf);
-	
+
 	if (err != STATUS_OK) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 		RETURN_NULL();
 	}
-
 #ifdef PHP_CS_74
-	RETURN_RES(zend_register_resource(return_value,le_clearsilver_hdf));
+	my_debug( "hdf_init register resource %016x\n" , hdf );
+	RETURN_RES(zend_register_resource(hdf,le_clearsilver_hdf));
 #else
 	ZEND_REGISTER_RESOURCE(return_value, hdf, le_clearsilver_hdf);	// TODO LORI
 #endif
@@ -286,22 +304,35 @@ PHP_FUNCTION(hdf_init) {
    Read an HDF data file */
 PHP_FUNCTION(hdf_read_file) {
 	zval *zhdf = NULL;
-	char *path = NULL;
 	int argc = ZEND_NUM_ARGS();
-	int path_len;
+	char *path = NULL;
+	PHPCS_STRLEN_VAR path_len = 0;
+
 	HDF *hdf = NULL;
 	NEOERR *err = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &path, &path_len) == FAILURE) 
+	my_debug( "hdf_read_file started with args %d\n" , argc );
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf,&path,&path_len) != SUCCESS) {
+		my_debug( "hdf_read_file parse failed\n" );
 		RETURN_FALSE;
+	}
 
+	my_debug( "hdf_read_file parse succeed, zhdf %016x path: %s\n" , zhdf , path );
+	my_debug( "fetching\n" );
 	PHPCS_HDF_PARAM(hdf,zhdf);
+	my_debug( "fetched\n" );
+	if (!hdf) {
+		my_debug( "hdf_read_file resource failed\n" );
+		RETURN_FALSE;
+	}
+	my_debug( "hdf_read_file we cool\n" );
+	RETURN_TRUE;
 
 	if (!hdf) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
 		RETURN_FALSE;
 	}
-	
+
 	err = hdf_read_file(hdf, path);
 
 	if (err != STATUS_OK) {
@@ -319,11 +350,11 @@ PHP_FUNCTION(hdf_write_file) {
 	zval *zhdf = NULL;
 	char *path = NULL;
 	int argc = ZEND_NUM_ARGS();
-	int path_len;
+	PHPCS_STRLEN_VAR path_len = 0;
 	HDF *hdf = NULL;
 	NEOERR *err = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &path, &path_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &path, &path_len) == FAILURE)
 		RETURN_FALSE;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -332,7 +363,7 @@ PHP_FUNCTION(hdf_write_file) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
 		RETURN_FALSE;
 	}
-	
+
 	err = hdf_write_file(hdf, path);
 
 	if (err != STATUS_OK) {
@@ -353,7 +384,7 @@ PHP_FUNCTION(hdf_write_string) {
 	NEOERR *err = NULL;
 	char *str = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -362,7 +393,7 @@ PHP_FUNCTION(hdf_write_string) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
 		RETURN_NULL();
 	}
-	
+
 	err = hdf_write_string(hdf, &str);
 
 	if (err != STATUS_OK) {
@@ -386,9 +417,9 @@ PHP_FUNCTION(hdf_read_string) {
 	HDF *hdf = NULL;
 	NEOERR *err = NULL;
 	char *str = NULL;
-	int str_len;
+	PHPCS_STRLEN_VAR str_len = 0;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &str, &str_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &str, &str_len) == FAILURE)
 		RETURN_FALSE;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -397,7 +428,7 @@ PHP_FUNCTION(hdf_read_string) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
 		RETURN_FALSE;
 	}
-	
+
 	err = hdf_read_string(hdf, str);
 
 	if (err != STATUS_OK) {
@@ -428,7 +459,7 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 	ulong	   num_key;
 	HashPosition pos;
 	NEOERR *err = NULL;
-	
+
 	zend_hash_internal_pointer_reset_ex(src, &pos);
 #ifdef PHP_CS_74
 	while (src_entry = zend_hash_get_current_data_ex(src, &pos)) {			// TODO LORI
@@ -476,19 +507,19 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 		zval_ptr_dtor(&key);
 		key = NULL;
 #endif
-		
+
 		if (err != STATUS_OK) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 			return 0;
 		}
-		
+
 #ifdef PHP_CS_74
 		if (Z_TYPE_P(src_entry) == IS_ARRAY) {
 #else
 		if (Z_TYPE_PP(src_entry) == IS_ARRAY) {
 #endif
 			HashTable *thash;
-			
+
 			/* we need to check for recursion */
 #ifdef PHP_CS_74
 			thash = HASH_OF((src_entry));		// TODO LORI
@@ -501,11 +532,11 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 
 				return 0;
 			}
-			
+
 			if (!hdf_set_array(node, thash TSRMLS_CC)) {
 				return 0;
 			}
-			
+
 		} else {
 			convert_to_string_ex(src_entry);
 			//php_printf("key='%s' value='%s'\n", string_key, Z_STRVAL_PP(src_entry));
@@ -534,11 +565,11 @@ PHP_FUNCTION(hdf_set_value) {
 	zval *value = NULL;
 	char *name = NULL;
 	int argc = ZEND_NUM_ARGS();
-	int name_len = 0;
+	PHPCS_STRLEN_VAR name_len = 0;
 	HDF *hdf = NULL;
 	NEOERR *err = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rsz", &zhdf, &name, &name_len, &value) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rsz", &zhdf, &name, &name_len, &value) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -566,7 +597,7 @@ PHP_FUNCTION(hdf_set_value) {
 	php_ob_get_buffer(return_value TSRMLS_CC);
 	php_end_ob_buffer(0, 0 TSRMLS_CC);
 #endif
-	
+
 	err = hdf_set_value(hdf, name, Z_STRVAL_P(return_value));
 	if (err != STATUS_OK) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
@@ -586,11 +617,11 @@ PHP_FUNCTION(hdf_get_value)
 	char *defval = NULL;
 	char *value = NULL;
 	int argc = ZEND_NUM_ARGS();
-	int name_len;
-	int defval_len;
+	PHPCS_STRLEN_VAR name_len = 0;
+	PHPCS_STRLEN_VAR defval_len = 0;
 	HDF *hdf = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rss", &zhdf, &name, &name_len, &defval, &defval_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rss", &zhdf, &name, &name_len, &defval, &defval_len) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -617,12 +648,12 @@ PHP_FUNCTION(hdf_get_node)
 	zval *zhdf = NULL;
 	char *name = NULL;
 	int argc = ZEND_NUM_ARGS();
-	int name_len;
 	NEOERR *err = NULL;
 	HDF *hdf = NULL;
 	HDF *node = NULL;
+	PHPCS_STRLEN_VAR name_len = 0;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -638,12 +669,14 @@ PHP_FUNCTION(hdf_get_node)
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 		RETURN_NULL();
 	}
-	
+
 	if (!node) {
 		RETURN_NULL();
 	}
 
-#ifndef PHP_CS_74
+#ifdef PHP_CS_74
+	RETURN_RES(zend_register_resource(hdf,le_clearsilver_hdf));
+#else
 	ZEND_REGISTER_RESOURCE(return_value, node, le_clearsilver_hdf);
 #endif
 }
@@ -656,11 +689,11 @@ PHP_FUNCTION(hdf_get_obj)
 	zval *zhdf = NULL;
 	char *name = NULL;
 	int argc = ZEND_NUM_ARGS();
-	int name_len;
+	PHPCS_STRLEN_VAR name_len = 0;
 	HDF *hdf = NULL;
 	HDF *obj = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -676,7 +709,9 @@ PHP_FUNCTION(hdf_get_obj)
 		RETURN_NULL();
 	}
 
-#ifndef PHP_CS_74
+#ifdef PHP_CS_74
+	RETURN_RES(zend_register_resource(obj,le_clearsilver_hdf));
+#else
 	ZEND_REGISTER_RESOURCE(return_value, obj, le_clearsilver_hdf);
 #endif
 }
@@ -690,12 +725,12 @@ PHP_FUNCTION(hdf_set_node)
 	zval *value = NULL;
 	char *name = NULL;
 	int argc = ZEND_NUM_ARGS();
-	int name_len = 0;
+	PHPCS_STRLEN_VAR name_len = 0;
 	HDF *hdf = NULL;
 	HDF *node = NULL;		   /* child node */
 	NEOERR *err = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rsz", &zhdf, &name, &name_len, &value) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rsz", &zhdf, &name, &name_len, &value) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -704,7 +739,7 @@ PHP_FUNCTION(hdf_set_node)
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
 		RETURN_FALSE;
 	}
-	
+
 	switch(Z_TYPE_P(value)) {
 	case IS_ARRAY:
 		err = hdf_get_node(hdf, name, &node);
@@ -712,7 +747,7 @@ PHP_FUNCTION(hdf_set_node)
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 			RETURN_FALSE;
 		}
-		
+
 		if (!hdf_set_array(node, Z_ARRVAL_P(value) TSRMLS_CC)) {
 			RETURN_FALSE;
 		}
@@ -736,13 +771,13 @@ PHP_FUNCTION(hdf_set_node)
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 			RETURN_FALSE;
 		}
-		
+
 		break;
 	default:
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "invalid type for value; expecting array or HDF resource");
 		RETURN_FALSE;
 	}
-	
+
 	RETURN_TRUE;
 }
 /* }}} */
@@ -756,7 +791,7 @@ PHP_FUNCTION(hdf_obj_name)
 	char *name = NULL;
 	HDF *hdf = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -789,7 +824,7 @@ PHP_FUNCTION(hdf_obj_value)
 	char *value = NULL;
 	HDF *hdf = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -821,7 +856,7 @@ PHP_FUNCTION(hdf_obj_child)
 	HDF *hdf = NULL;
 	HDF *child = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -836,7 +871,9 @@ PHP_FUNCTION(hdf_obj_child)
 		RETURN_NULL();
 	}
 
-#ifndef PHP_CS_74
+#ifdef PHP_CS_74
+	RETURN_RES(zend_register_resource(child,le_clearsilver_hdf));
+#else
 	ZEND_REGISTER_RESOURCE(return_value, child, le_clearsilver_hdf);
 #endif
 }
@@ -849,11 +886,11 @@ PHP_FUNCTION(hdf_get_child)
 	zval *zhdf = NULL;
 	int argc = ZEND_NUM_ARGS();
 	char *name = NULL;
-	int name_len;
+	PHPCS_STRLEN_VAR name_len = 0;
 	HDF *hdf = NULL;
 	HDF *child = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -868,7 +905,9 @@ PHP_FUNCTION(hdf_get_child)
 		RETURN_NULL();
 	}
 
-#ifndef PHP_CS_74
+#ifdef PHP_CS_74
+	RETURN_RES(zend_register_resource(child,le_clearsilver_hdf));
+#else
 	ZEND_REGISTER_RESOURCE(return_value, child, le_clearsilver_hdf);
 #endif
 }
@@ -884,7 +923,7 @@ PHP_FUNCTION(hdf_obj_next)
 	HDF *hdf = NULL;
 	HDF *next = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -900,7 +939,9 @@ PHP_FUNCTION(hdf_obj_next)
 		RETURN_NULL();
 	}
 
-#ifndef PHP_CS_74
+#ifdef PHP_CS_74
+	RETURN_RES(zend_register_resource(next,le_clearsilver_hdf));
+#else
 	ZEND_REGISTER_RESOURCE(return_value, next, le_clearsilver_hdf);
 #endif
 }
@@ -914,10 +955,10 @@ PHP_FUNCTION(hdf_remove_tree)
 	int argc = ZEND_NUM_ARGS();
 	HDF *hdf = NULL;
 	char *name = NULL;
-	int name_len;
+	PHPCS_STRLEN_VAR name_len = 0;
 	NEOERR *err = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE)
 		RETURN_FALSE;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -946,18 +987,25 @@ PHP_FUNCTION(hdf_destroy)
 	int argc = ZEND_NUM_ARGS();
 	HDF *hdf = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) 
+	my_debug( "hdf_destroy parse\n" );
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) {
+		my_debug( "hdf_destroy parse failed\n" );
 		RETURN_FALSE;
-	
+	}
+
+	my_debug( "hdf_destroy parse succeed %016x\n" , Z_RES_P(zhdf) );
 	PHPCS_HDF_PARAM(hdf,zhdf);
+	my_debug( "hdf_destroy fetch succeed %016x\n" , hdf );
 
 	if(hdf != hdf_obj_top(hdf)) {
+		my_debug( "hdf_destroy could not find\n" );
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Cannot destroy HDF node: the node is not the root node");
 		RETURN_FALSE;
 	}
 
 #ifdef PHP_CS_74
 	zend_list_delete(Z_RES_P(zhdf));		// TODO LORI
+	my_debug( "hdf_destroy succeed\n" );
 #else
 	zend_list_delete(Z_LVAL_P(zhdf));
 #endif
@@ -975,7 +1023,7 @@ PHP_FUNCTION(cs_init) {
 	int argc = ZEND_NUM_ARGS();
 	HDF *hdf = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE)
 		return;
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
@@ -986,13 +1034,15 @@ PHP_FUNCTION(cs_init) {
 	}
 
 	err = cs_init(&parse, hdf);
-	
+
 	if (err != STATUS_OK) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 		RETURN_NULL();
 	}
 
-#ifndef PHP_CS_74
+#ifdef PHP_CS_74
+	RETURN_RES(zend_register_resource(parse,le_clearsilver_cs));
+#else
 	ZEND_REGISTER_RESOURCE(return_value, parse, le_clearsilver_cs);
 #endif
 }
@@ -1007,10 +1057,10 @@ PHP_FUNCTION(cs_parse_string)
 	NEOERR *err = NULL;
 	char *template = NULL;
 	char *buf = NULL;
-	int template_len;
+	PHPCS_STRLEN_VAR template_len = 0;
 	int argc = ZEND_NUM_ARGS();
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zparse, &template, &template_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zparse, &template, &template_len) == FAILURE)
 		RETURN_FALSE;
 
 	PHPCS_CS_PARAM(parse,zparse);
@@ -1028,7 +1078,7 @@ PHP_FUNCTION(cs_parse_string)
 	}
 
 	err = cs_parse_string(parse, buf, template_len);
-	
+
 	if (err != STATUS_OK) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 		RETURN_FALSE;
@@ -1046,12 +1096,12 @@ PHP_FUNCTION(cs_parse_file)
 	CSPARSE *parse = NULL;
 	NEOERR *err = NULL;
 	char *path = NULL;
-	int path_len;
+	PHPCS_STRLEN_VAR path_len = 0;
 	int argc = ZEND_NUM_ARGS();
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zparse, &path, &path_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zparse, &path, &path_len) == FAILURE)
 		RETURN_FALSE;
-	
+
 	PHPCS_CS_PARAM(parse,zparse);
 
 	if (!parse) {
@@ -1060,7 +1110,7 @@ PHP_FUNCTION(cs_parse_file)
 	}
 
 	err = cs_parse_file(parse, path);
-	
+
 	if (err != STATUS_OK) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 		RETURN_FALSE;
@@ -1080,7 +1130,7 @@ PHP_FUNCTION(cs_render)
 	STRING str;
 	int argc = ZEND_NUM_ARGS();
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zparse) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zparse) == FAILURE)
 		return;
 
 	PHPCS_CS_PARAM(parse,zparse);
@@ -1089,10 +1139,10 @@ PHP_FUNCTION(cs_render)
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve CS resource");
 		RETURN_NULL();
 	}
-	
+
 	string_init(&str);
 	err = cs_render(parse, &str, render_cb);
-	
+
 	if (err != STATUS_OK) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 		RETURN_NULL();
@@ -1120,7 +1170,7 @@ PHP_FUNCTION(cs_destroy)
 	CSPARSE *parse = NULL;
 	int argc = ZEND_NUM_ARGS();
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zparse) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zparse) == FAILURE)
 		return;
 
 	PHPCS_CS_PARAM(parse,zparse);
