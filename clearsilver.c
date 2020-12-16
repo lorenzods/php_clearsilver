@@ -275,7 +275,9 @@ PHP_FUNCTION(hdf_init)
 		RETURN_NULL();
 	}
 
-	ZEND_REGISTER_RESOURCE(return_value, hdf, le_clearsilver_hdf);
+#ifndef PHP_CS_74
+	ZEND_REGISTER_RESOURCE(return_value, hdf, le_clearsilver_hdf);	// TODO LORI
+#endif
 }
 /* }}} */
 
@@ -413,11 +415,12 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 #else
 	zval** src_entry = NULL;
 #endif
-	zval* key = NULL;
 #ifdef PHP_CS_74
+	zval key;
 	zend_string* string_key = NULL;
 	zend_ulong	string_key_len;
 #else
+	zval* key = NULL;
 	char	   *string_key = NULL;
 	uint		string_key_len;
 #endif
@@ -433,24 +436,25 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 #endif
 		HDF *node = NULL;		   /* child node */
 
-		/* Allocate space for key */
-		MAKE_STD_ZVAL(key);
 
-		/* Set up the key */
 #ifdef PHP_CS_74
+		/* Set up the key */
 		if (zend_hash_get_current_key_ex(src, &string_key, &num_key, &pos) == HASH_KEY_IS_LONG) {	// TODO LORI
 #else
+		/* Allocate space for key */
+		MAKE_STD_ZVAL(key);
+		/* Set up the key */
 		if (zend_hash_get_current_key_ex(src, &string_key, &string_key_len, &num_key, 0, &pos) == HASH_KEY_IS_LONG) {
 #endif
 #ifdef PHP_CS_74
-			ZVAL_LONG( key , num_key );
+			ZVAL_LONG(&key , num_key );
 #else
 			Z_TYPE_P(key) = IS_LONG;
 			Z_LVAL_P(key) = num_key;
 #endif
 		} else {
 #ifdef PHP_CS_74
-			ZVAL_STRING(key, "abc" );
+			ZVAL_STRING(&key, "abc" );
 #else
 			ZVAL_STRINGL(key, string_key, string_key_len-1, 1);
 #endif
@@ -462,22 +466,26 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 
 		/* Create a HDF node equivalent for the current key*/
 		//php_printf("key='%s'\n", Z_STRVAL_P(key));
-		err = hdf_get_node(hdf, Z_STRVAL_P(key), &node);
+		err = hdf_get_node(hdf, Z_STRVAL(key), &node);
 
 		/* we don't need the key anymore */
 #ifdef PHP_CS_74
-		zval_ptr_dtor(key);
+		zval_ptr_dtor(&key);
 #else
 		zval_ptr_dtor(&key);
-#endif
 		key = NULL;
+#endif
 		
 		if (err != STATUS_OK) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, neo_error_to_string(err));
 			return 0;
 		}
 		
+#ifdef PHP_CS_74
+		if (Z_TYPE_P(src_entry) == IS_ARRAY) {
+#else
 		if (Z_TYPE_PP(src_entry) == IS_ARRAY) {
+#endif
 			HashTable *thash;
 			
 			/* we need to check for recursion */
@@ -540,7 +548,7 @@ PHP_FUNCTION(hdf_set_value) {
 	}
 
 	/* start buffering */
-#ifdef PHP_CS_54
+#if (defined( PHP_CS_74) || defined( PHP_CS_74) )
 	php_output_start_default(TSRMLS_C);
 #else
 	php_start_ob_buffer (NULL, 0, 1 TSRMLS_CC);
@@ -550,12 +558,12 @@ PHP_FUNCTION(hdf_set_value) {
 	zend_print_variable(value);
 
 	/* retrieve output buffer */
-#ifdef PHP_CS_54
+#if (defined( PHP_CS_74) || defined( PHP_CS_74) )
 	php_output_get_contents(return_value TSRMLS_CC);
 	php_output_discard(TSRMLS_C);
 #else
-	php_ob_get_buffer (return_value TSRMLS_CC);
-	php_end_ob_buffer (0, 0 TSRMLS_CC);
+	php_ob_get_buffer(return_value TSRMLS_CC);
+	php_end_ob_buffer(0, 0 TSRMLS_CC);
 #endif
 	
 	err = hdf_set_value(hdf, name, Z_STRVAL_P(return_value));
@@ -634,7 +642,9 @@ PHP_FUNCTION(hdf_get_node)
 		RETURN_NULL();
 	}
 
+#ifndef PHP_CS_74
 	ZEND_REGISTER_RESOURCE(return_value, node, le_clearsilver_hdf);
+#endif
 }
 /* }}} */
 
@@ -665,7 +675,9 @@ PHP_FUNCTION(hdf_get_obj)
 		RETURN_NULL();
 	}
 
+#ifndef PHP_CS_74
 	ZEND_REGISTER_RESOURCE(return_value, obj, le_clearsilver_hdf);
+#endif
 }
 /* }}} */
 
@@ -823,7 +835,9 @@ PHP_FUNCTION(hdf_obj_child)
 		RETURN_NULL();
 	}
 
+#ifndef PHP_CS_74
 	ZEND_REGISTER_RESOURCE(return_value, child, le_clearsilver_hdf);
+#endif
 }
 /* }}} */
 
@@ -853,7 +867,9 @@ PHP_FUNCTION(hdf_get_child)
 		RETURN_NULL();
 	}
 
+#ifndef PHP_CS_74
 	ZEND_REGISTER_RESOURCE(return_value, child, le_clearsilver_hdf);
+#endif
 }
 /* }}} */
 
@@ -883,7 +899,9 @@ PHP_FUNCTION(hdf_obj_next)
 		RETURN_NULL();
 	}
 
+#ifndef PHP_CS_74
 	ZEND_REGISTER_RESOURCE(return_value, next, le_clearsilver_hdf);
+#endif
 }
 /* }}} */
 
@@ -973,7 +991,9 @@ PHP_FUNCTION(cs_init) {
 		RETURN_NULL();
 	}
 
+#ifndef PHP_CS_74
 	ZEND_REGISTER_RESOURCE(return_value, parse, le_clearsilver_cs);
+#endif
 }
 /* }}} */
 
