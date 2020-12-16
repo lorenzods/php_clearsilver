@@ -259,8 +259,7 @@ PHP_MINFO_FUNCTION(clearsilver)
 
 /* {{{ proto resource hdf_init()
    Initialize an HDF data set */
-PHP_FUNCTION(hdf_init)
-{
+PHP_FUNCTION(hdf_init) {
 	HDF *hdf;
 	NEOERR *err;
 
@@ -275,7 +274,9 @@ PHP_FUNCTION(hdf_init)
 		RETURN_NULL();
 	}
 
-#ifndef PHP_CS_74
+#ifdef PHP_CS_74
+	RETURN_RES(zend_register_resource(return_value,le_clearsilver_hdf));
+#else
 	ZEND_REGISTER_RESOURCE(return_value, hdf, le_clearsilver_hdf);	// TODO LORI
 #endif
 }
