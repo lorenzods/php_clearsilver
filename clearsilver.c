@@ -1002,7 +1002,7 @@ PHP_FUNCTION(hdf_destroy)
 	}
 
 #ifdef PHP_CS_74
-	zend_list_delete(Z_RES_P(zhdf));
+	zend_list_close(Z_RES_P(zhdf));
 	// my_debug( "hdf_destroy succeed\n" );
 #else
 	zend_list_delete(Z_LVAL_P(zhdf));
@@ -1182,7 +1182,7 @@ PHP_FUNCTION(cs_destroy) {
 
 	PHPCS_CS_PARAM(parse,zparse);
 #ifdef PHP_CS_74
-	zend_list_delete(Z_RES_P(zparse));
+	zend_list_close(Z_RES_P(zparse));
 #else
 	zend_list_delete(Z_LVAL_P(zparse));
 #endif
