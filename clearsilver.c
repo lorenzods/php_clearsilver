@@ -452,7 +452,7 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 	zval** src_entry = NULL;
 #endif
 #ifdef PHP_CS_74
-	zval key;
+	zval* key;
 	zend_string* string_key = NULL;
 	zend_ulong	string_key_len;
 #else
@@ -466,13 +466,13 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 
 	zend_hash_internal_pointer_reset_ex(src, &pos);
 #ifdef PHP_CS_74
+	my_debug( "hdf_set_array <%016x>\n" , hdf );
 	while (src_entry = zend_hash_get_current_data_ex(src, &pos)) {			// TODO LORI
+		my_debug( "hdf_set_array entry <%016x> on %d\n" , hdf , pos );
 #else
 	while (zend_hash_get_current_data_ex(src, (void **)&src_entry, &pos) == SUCCESS) {
 #endif
-		HDF *node = NULL;		   /* child node */
-
-
+		HDF* node = NULL;		   /* child node */
 #ifdef PHP_CS_74
 		/* Set up the key */
 		if (zend_hash_get_current_key_ex(src, &string_key, &num_key, &pos) == HASH_KEY_IS_LONG) {	// TODO LORI
@@ -482,32 +482,39 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 		/* Set up the key */
 		if (zend_hash_get_current_key_ex(src, &string_key, &string_key_len, &num_key, 0, &pos) == HASH_KEY_IS_LONG) {
 #endif
+			my_debug( "hashtable pos is long <%016x,%016x> on %d\n" , hdf , src , pos );
 #ifdef PHP_CS_74
-			ZVAL_LONG(&key , num_key );
+			my_debug( "setting key to long %d\n" , num_key );
+			zval tempnum;
+			ZVAL_LONG( &tempnum , num_key );
+			string_key = zval_get_string( &tempnum );
+			ZVAL_STRING(&tempnum , string_key );
+			my_debug( "string val is <%016x> => <%s>\n" , hdf , ZSTR_VAL(string_key)  );
+			my_debug( "key did converted\n" );
+			err = hdf_get_node(hdf, ZSTR_VAL(string_key) , &node);
+			my_debug( "error is: %d\n" , err );
+			my_debug( "hdf_set_array get long node <%016x,%s> got <%016x>\n" , hdf , ZSTR_VAL( string_key ) , node );
 #else
 			Z_TYPE_P(key) = IS_LONG;
 			Z_LVAL_P(key) = num_key;
 #endif
 		} else {
 #ifdef PHP_CS_74
-			ZVAL_STRING(&key, "abc" );
+			my_debug( "hashtable pos is string <%016x,%016x> on %d\n" , hdf , src , pos );
+			my_debug( "setting key to string <%016x> => <%s>\n" , hdf , ZSTR_VAL(string_key)  );
+			err = hdf_get_node(hdf, ZSTR_VAL(string_key) , &node);
+			my_debug( "error is: %d\n" , err );
+			my_debug( "hdf_set_array get string node <%016x,%s> got <%016x>\n" , hdf , ZSTR_VAL( string_key ) , node );
 #else
 			ZVAL_STRINGL(key, string_key, string_key_len-1, 1);
 #endif
 		}
 
 #ifndef PHP_CS_74
-		convert_to_string_ex(&key);			// TODO LORI
-#endif
-
 		/* Create a HDF node equivalent for the current key*/
 		//php_printf("key='%s'\n", Z_STRVAL_P(key));
-		err = hdf_get_node(hdf, Z_STRVAL(key), &node);
-
-		/* we don't need the key anymore */
-#ifdef PHP_CS_74
-		zval_ptr_dtor(&key);
-#else
+		convert_to_string_ex(&key);
+		err = hdf_get_node(hdf, key, &node);
 		zval_ptr_dtor(&key);
 		key = NULL;
 #endif
@@ -537,16 +544,19 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 				return 0;
 			}
 
+			my_debug( "hdf_set_value set array on <%016x> to <%016x>\n" , node , thash );
 			if (!hdf_set_array(node, thash TSRMLS_CC)) {
 				return 0;
 			}
 
 		} else {
 			convert_to_string_ex(src_entry);
+			my_debug( "hdf_set_value on <%016x> to <%s> => <%s>\n" , node , ZSTR_VAL(string_key) , Z_STRVAL_P(src_entry) );
 			//php_printf("key='%s' value='%s'\n", string_key, Z_STRVAL_PP(src_entry));
 
 #ifdef PHP_CS_74
-			err = hdf_set_value(node, NULL, Z_STRVAL_P(src_entry));
+			// err = hdf_set_value(node, NULL , Z_STRVAL_P(src_entry));
+			err = hdf_set_value(node, ZSTR_VAL(string_key) , Z_STRVAL_P(src_entry));
 #else
 			err = hdf_set_value(node, NULL, Z_STRVAL_PP(src_entry));
 #endif
@@ -558,7 +568,7 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 
 		zend_hash_move_forward_ex(src, &pos);
 	}
-
+	my_debug( "hdf_set_array finished <%016x>\n" , hdf );
 	return 1;
 }
 
@@ -658,8 +668,7 @@ PHP_FUNCTION(hdf_get_value) {
 
 /* {{{ proto resource hdf_get_node(resource hdf, string name)
    Return the HDF data set node at a named location, creating it if it does not exist */
-PHP_FUNCTION(hdf_get_node)
-{
+PHP_FUNCTION(hdf_get_node) {
 	zval *zhdf = NULL;
 	char *name = NULL;
 	int argc = ZEND_NUM_ARGS();
@@ -668,10 +677,15 @@ PHP_FUNCTION(hdf_get_node)
 	HDF *node = NULL;
 	PHPCS_STRLEN_VAR name_len = 0;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE)
+	my_debug( "hdf_get_node called\n" );
+	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf, &name, &name_len) == FAILURE) {
+		my_debug( "hdf_get_node parse failed\n" );
 		return;
+	}
+	my_debug( "hdf_get_node parse succeed\n" );
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
+	my_debug( "hdf_get_node fetch succeed <%s>\n" ,name );
 
 	if (!hdf) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
@@ -734,8 +748,7 @@ PHP_FUNCTION(hdf_get_obj)
 
 /* {{{ proto bool hdf_set_node(resource hdf, string name, mixed value)
    Set the node structure of a named node */
-PHP_FUNCTION(hdf_set_node)
-{
+PHP_FUNCTION(hdf_set_node) {
 	zval *zhdf = NULL;
 	zval *value = NULL;
 	char *name = NULL;
@@ -755,7 +768,7 @@ PHP_FUNCTION(hdf_set_node)
 		RETURN_FALSE;
 	}
 
-	switch(Z_TYPE_P(value)) {
+	switch (Z_TYPE_P(value)) {
 	case IS_ARRAY:
 		err = hdf_get_node(hdf, name, &node);
 		if (err != STATUS_OK) {
@@ -799,8 +812,7 @@ PHP_FUNCTION(hdf_set_node)
 
 /* {{{ proto string hdf_obj_name(resource hdf)
    Return the name of a node */
-PHP_FUNCTION(hdf_obj_name)
-{
+PHP_FUNCTION(hdf_obj_name) {
 	zval *zhdf = NULL;
 	int argc = ZEND_NUM_ARGS();
 	char *name = NULL;
@@ -819,10 +831,12 @@ PHP_FUNCTION(hdf_obj_name)
 	name = hdf_obj_name(hdf);
 
 	if (!name) {
+		my_debug( "obj name on <%016x> not found\n" , hdf );
 		RETURN_NULL();
 	}
 
 #ifdef PHP_CS_74
+	my_debug( "obj name on <%016x> is <%s>\n" , hdf , name );
 	RETURN_STRING(name);
 #else
 	RETURN_STRING(name, 1);
@@ -832,8 +846,7 @@ PHP_FUNCTION(hdf_obj_name)
 
 /* {{{ proto string hdf_obj_value(resource hdf)
    Return the value of a node */
-PHP_FUNCTION(hdf_obj_value)
-{
+PHP_FUNCTION(hdf_obj_value) {
 	zval *zhdf = NULL;
 	int argc = ZEND_NUM_ARGS();
 	char *value = NULL;
@@ -853,8 +866,8 @@ PHP_FUNCTION(hdf_obj_value)
 	if (!value) {
 		RETURN_EMPTY_STRING();
 	}
-
 #ifdef PHP_CS_74
+	my_debug( "obj value on <%016x> is <%s>\n" , hdf , value );
 	RETURN_STRING(value);
 #else
 	RETURN_STRING(value, 1);
@@ -864,15 +877,15 @@ PHP_FUNCTION(hdf_obj_value)
 
 /* {{{ proto resource hdf_obj_child(resource hdf)
    Return the first child of a dataset node */
-PHP_FUNCTION(hdf_obj_child)
-{
+PHP_FUNCTION(hdf_obj_child) {
 	zval *zhdf = NULL;
 	int argc = ZEND_NUM_ARGS();
 	HDF *hdf = NULL;
 	HDF *child = NULL;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE)
+	if (zend_parse_parameters(argc TSRMLS_CC, "r", &zhdf) == FAILURE) {
 		return;
+	}
 
 	PHPCS_HDF_PARAM(hdf,zhdf);
 	if (!hdf) {
@@ -881,7 +894,7 @@ PHP_FUNCTION(hdf_obj_child)
 	}
 
 	child = hdf_obj_child(hdf);
-
+	my_debug( "hdf_obj_child is <%016x> on <%016x>\n" , hdf , child );
 	if (!child) {
 		RETURN_NULL();
 	}
@@ -896,8 +909,7 @@ PHP_FUNCTION(hdf_obj_child)
 
 /* {{{ proto resource hdf_get_child(resource hdf, string name)
    Return the first child of the named node */
-PHP_FUNCTION(hdf_get_child)
-{
+PHP_FUNCTION(hdf_get_child) {
 	zval *zhdf = NULL;
 	int argc = ZEND_NUM_ARGS();
 	char *name = NULL;
@@ -948,6 +960,7 @@ PHP_FUNCTION(hdf_obj_next) {
 	}
 
 	next = hdf_obj_next(hdf);
+	my_debug( "hdf_obj_next is <%016x> on <%016x>\n" , hdf , next );
 
 	if (!next) {
 		RETURN_NULL();
