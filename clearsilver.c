@@ -52,25 +52,14 @@
 #define PHPCS_CS_PARAM(_cs,_input) ZEND_FETCH_RESOURCE(_cs, CSPARSE *, &_input, -1, "ClearSilver CS", le_clearsilver_cs)
 #endif
 
-#define my_debug(str...) { FILE* tst = fopen("mytext.txt","a");if (tst) { fprintf(tst, str);fclose(tst); } }
+#define my_debug(str...) {}
+// { FILE* tst = fopen("mytext.txt","a");if (tst) { fprintf(tst, str);fclose(tst); } }
 
 #ifdef PHP_CS_74
 #define PHPCS_STRLEN_VAR size_t
 #else
 #define PHPCS_STRLEN_VAR int
 #endif
-
-/*
-void my_debug( const char* str ) {
-	FILE* tst;
-	tst = fopen("mytext.txt","a");
-	if (!tst) {
-		return;
-	}
-	fprintf( tst , "%s\n" , str );
-	fclose( tst );
-}
-*/
 
 /***********************************************************************
  * NOTE FOR FUTURE DEVELOPMENT:
@@ -216,7 +205,6 @@ ZEND_GET_MODULE(clearsilver)
 	*/
 
 	REGISTER_STRING_CONSTANT("PHP_CLEARSILVER_VERSION", PHP_CLEARSILVER_VERSION, CONST_CS | CONST_PERSISTENT);
-	my_debug( "init\n" );
 	le_clearsilver_hdf = zend_register_list_destructors_ex(clearsilver_hdf_dtor,
 														   NULL,
 														   "ClearSilver HDF",
@@ -235,8 +223,6 @@ ZEND_GET_MODULE(clearsilver)
  */
 PHP_MSHUTDOWN_FUNCTION(clearsilver)
 {
-	my_debug( "shutdown\n" );
-	my_debug( "-----------------------------------\n" );
 	/* uncomment this line if you have INI entries
 	   UNREGISTER_INI_ENTRIES();
 	*/
@@ -250,7 +236,6 @@ PHP_MSHUTDOWN_FUNCTION(clearsilver)
  */
 PHP_RINIT_FUNCTION(clearsilver)
 {
-	my_debug( "rinit\n" );
 	return SUCCESS;
 }
 /* }}} */
@@ -260,7 +245,6 @@ PHP_RINIT_FUNCTION(clearsilver)
  */
 PHP_RSHUTDOWN_FUNCTION(clearsilver)
 {
-	my_debug( "rshutdown\n" );
 	return SUCCESS;
 }
 /* }}} */
@@ -286,7 +270,6 @@ PHP_FUNCTION(hdf_init) {
 	HDF *hdf;
 	NEOERR *err;
 
-	my_debug( "hdf_init called\n" );
 	if (ZEND_NUM_ARGS() != 0) {
 		WRONG_PARAM_COUNT;
 	}
@@ -298,10 +281,9 @@ PHP_FUNCTION(hdf_init) {
 		RETURN_NULL();
 	}
 #ifdef PHP_CS_74
-	my_debug( "hdf_init register resource %016x with num %d\n" , hdf , le_clearsilver_hdf );
 	RETURN_RES(zend_register_resource(hdf,le_clearsilver_hdf));
 #else
-	ZEND_REGISTER_RESOURCE(return_value, hdf, le_clearsilver_hdf);	// TODO LORI
+	ZEND_REGISTER_RESOURCE(return_value, hdf, le_clearsilver_hdf);
 #endif
 }
 /* }}} */
@@ -317,21 +299,14 @@ PHP_FUNCTION(hdf_read_file) {
 	HDF *hdf = NULL;
 	NEOERR *err = NULL;
 
-	my_debug( "hdf_read_file started with args %d\n" , argc );
 	if (zend_parse_parameters(argc TSRMLS_CC, "rs", &zhdf,&path,&path_len) != SUCCESS) {
-		my_debug( "hdf_read_file parse failed\n" );
 		RETURN_FALSE;
 	}
 
-	my_debug( "hdf_read_file parse succeed, zhdf %016x path: %s\n" , zhdf , path );
-	my_debug( "fetching\n" );
 	PHPCS_HDF_PARAM(hdf,zhdf);
-	my_debug( "fetched\n" );
 	if (!hdf) {
-		my_debug( "hdf_read_file resource failed\n" );
 		RETURN_FALSE;
 	}
-	my_debug( "hdf_read_file we cool\n" );
 
 	if (!hdf) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "failed to retrieve HDF resource");
@@ -466,25 +441,25 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 
 	zend_hash_internal_pointer_reset_ex(src, &pos);
 #ifdef PHP_CS_74
-	my_debug( "hdf_set_array <%016x>\n" , hdf );
-	while (src_entry = zend_hash_get_current_data_ex(src, &pos)) {			// TODO LORI
-		my_debug( "hdf_set_array entry <%016x> on %d\n" , hdf , pos );
+	// my_debug( "hdf_set_array <%016x>\n" , hdf );
+	while (src_entry = zend_hash_get_current_data_ex(src, &pos)) {
+		// my_debug( "hdf_set_array entry <%016x> on %d\n" , hdf , pos );
 #else
 	while (zend_hash_get_current_data_ex(src, (void **)&src_entry, &pos) == SUCCESS) {
 #endif
 		HDF* node = NULL;		   /* child node */
 #ifdef PHP_CS_74
 		/* Set up the key */
-		if (zend_hash_get_current_key_ex(src, &string_key, &num_key, &pos) == HASH_KEY_IS_LONG) {	// TODO LORI
+		if (zend_hash_get_current_key_ex(src, &string_key, &num_key, &pos) == HASH_KEY_IS_LONG) {
 #else
 		/* Allocate space for key */
 		MAKE_STD_ZVAL(key);
 		/* Set up the key */
 		if (zend_hash_get_current_key_ex(src, &string_key, &string_key_len, &num_key, 0, &pos) == HASH_KEY_IS_LONG) {
 #endif
-			my_debug( "hashtable pos is long <%016x,%016x> on %d\n" , hdf , src , pos );
+			// my_debug( "hashtable pos is long <%016x,%016x> on %d\n" , hdf , src , pos );
 #ifdef PHP_CS_74
-			my_debug( "setting key to long %d\n" , num_key );
+			// my_debug( "setting key to long %d\n" , num_key );
 			zval tempnum;
 			ZVAL_LONG( &tempnum , num_key );
 			string_key = zval_get_string( &tempnum );
@@ -544,19 +519,18 @@ int hdf_set_array(HDF *hdf, HashTable *src TSRMLS_DC) {
 				return 0;
 			}
 
-			my_debug( "hdf_set_value set array on <%016x> to <%016x>\n" , node , thash );
+			my_debug( "hdf_set_array hdf_set_array on <%016x> to <%016x>\n" , node , thash );
 			if (!hdf_set_array(node, thash TSRMLS_CC)) {
 				return 0;
 			}
-
 		} else {
 			convert_to_string_ex(src_entry);
-			my_debug( "hdf_set_value on <%016x> to <%s> => <%s>\n" , node , ZSTR_VAL(string_key) , Z_STRVAL_P(src_entry) );
+			my_debug( "hdf_set_array hdf_set_value on <%016x> to <%s> => <%s>\n" , node , ZSTR_VAL(string_key) , Z_STRVAL_P(src_entry) );
 			//php_printf("key='%s' value='%s'\n", string_key, Z_STRVAL_PP(src_entry));
 
 #ifdef PHP_CS_74
-			// err = hdf_set_value(node, NULL , Z_STRVAL_P(src_entry));
-			err = hdf_set_value(node, ZSTR_VAL(string_key) , Z_STRVAL_P(src_entry));
+			err = hdf_set_value(node, NULL , Z_STRVAL_P(src_entry));
+			// err = hdf_set_value(node, ZSTR_VAL(string_key) , Z_STRVAL_P(src_entry));
 #else
 			err = hdf_set_value(node, NULL, Z_STRVAL_PP(src_entry));
 #endif
@@ -862,12 +836,12 @@ PHP_FUNCTION(hdf_obj_value) {
 	}
 
 	value = hdf_obj_value(hdf);
+	my_debug( "obj value on <%016x> is <%s>\n" , hdf , value );
 
 	if (!value) {
 		RETURN_EMPTY_STRING();
 	}
 #ifdef PHP_CS_74
-	my_debug( "obj value on <%016x> is <%s>\n" , hdf , value );
 	RETURN_STRING(value);
 #else
 	RETURN_STRING(value, 1);
@@ -1031,7 +1005,7 @@ PHP_FUNCTION(hdf_destroy)
 	}
 
 #ifdef PHP_CS_74
-	zend_list_delete(Z_RES_P(zhdf));		// TODO LORI
+	zend_list_delete(Z_RES_P(zhdf));
 	my_debug( "hdf_destroy succeed\n" );
 #else
 	zend_list_delete(Z_LVAL_P(zhdf));
